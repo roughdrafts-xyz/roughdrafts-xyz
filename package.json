@@ -1,0 +1,25 @@
+{
+  "name": "roughdrafts-git-version",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@fastify/session": "^6.4.0",
+    "@prisma/client": "^3.9.2",
+    "ejs": "^3.1.6",
+    "fastify": "^3.27.1",
+    "fastify-cookie": "^5.5.0",
+    "fastify-formbody": "^5.2.0",
+    "isomorphic-git": "^1.11.2",
+    "markdown-it": "^12.3.2",
+    "nanoid": "^3.3.1",
+    "point-of-view": "^5.1.0",
+    "prisma": "^3.9.2",
+    "server": "^1.0.37"
+  }
+}
