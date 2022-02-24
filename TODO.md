@@ -9,6 +9,7 @@ Project Description
 ### Todo
 
 - ⭐ Swap to Server JS
+- [Make a template engine for js files with template literals](https://expressjs.com/en/advanced/developing-template-engines.html) (See notes.md, this is drafted)
 - Add Passport & Discord Oauth
 - See if theres a view thats just template literals
 - Find a testing suite (Jest?)
@@ -17,6 +18,7 @@ Project Description
 - Prep Procfile and ENV for Piku needs
 - Organize functions and files to make testing easier?
 - Add plugins to markdown-it
+- Setup Prisma to actually use mysql instead
 
 ### Done ✓
 
