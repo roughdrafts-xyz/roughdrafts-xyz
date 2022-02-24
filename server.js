@@ -72,6 +72,7 @@ fastify.get('/login', async (request, reply) => {
 })
 
 // this should be a post normally
+// https://github.com/jaredhanson/passport-oauth2 This supports scope, its just not a documented option
 fastify.get('/login/callback', async (request, reply) => {
   // idk discord is probably going to want this tho
   const discordId = '1235'
