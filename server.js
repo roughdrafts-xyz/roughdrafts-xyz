@@ -17,6 +17,12 @@ server(
   {
     port: 3000,
     views: 'views',
+    favicon: './favicon.png',
+    session: {
+      secret: 'This is a super very long secret password',
+      saveUninitialized: false,
+      cookie: { secure: false }
+    },
     engine: {
       html: (file, options, cb) =>
         es6Renderer(
@@ -32,7 +38,9 @@ server(
   },
   [
     get('/', async ctx => {
+      console.log('slash')
       if (ctx.session.user) {
+        console.log('ctx session', ctx.session.user)
         return redirect(`/@${ctx.session.user.displayId}`)
       } else {
         return render('login')

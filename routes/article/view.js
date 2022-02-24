@@ -4,6 +4,7 @@ const prisma = require('../../prisma')
 
 module.exports = [
   get('/:fileId', async ctx => {
+    console.log('fileId', ctx.params.fileId)
     const post = await prisma.article.findUnique({
       where: { displayId: ctx.params.fileId }
     })
