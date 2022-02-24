@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^3.9.2",
+    "express-es6-template-engine": "^2.2.3",
     "fastify-cookie": "^5.5.0",
     "markdown-it": "^12.3.2",
     "nanoid": "^3.3.1",

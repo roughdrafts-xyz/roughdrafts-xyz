@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  ${head}
+</head>
+
+<body>
+  <header>
+    <h2>Editing Settings for ${title}</h2>
+    <nav>
+      <button>Edit</button>
+      <button>Cancel</button>
+    </nav>
+  </header>
+  <form action="/${title}/settings" method="post">
+    <label>Private?</label> <input type="checkbox" name="private" value=${private} />
+    <button>Save</button>
+  </form>
+</body>
+
+</html>

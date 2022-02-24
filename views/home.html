@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  ${head}
+</head>
+
+<body>
+  <header>
+    <h2>${profile.name}</h2>
+    <p>${profile.summary}</p>
+  </header>
+  ${articles.map(
+  curr => /* html */ `<section>
+    <h3><a href="#">${curr.title}</a></h3>
+    <span>${curr.summary}</span><br />
+    <small>${curr.tags}</small>
+  </section>`
+  )
+  .join('')}
+</body>
+
+</html>

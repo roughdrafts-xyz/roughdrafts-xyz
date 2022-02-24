@@ -3,11 +3,12 @@
 // So the goal here is to just create a pastebin that you log into using Discord. When you log in, you're presented with all your files. You can edit or delete them.
 // The real value is that when you paste the link to Discord it has a user created Embed, acting like a really good preview to the longer article
 // People can just make index pages if they want to have collections
-const fastify = require('fastify')({
-  logger: {
-    level: 'debug'
-  }
-})
+
+const server = require('server')
+const { get, post } = server.router
+const { render } = server.reply
+const es6Renderer = require('express-es6-template-engine')
+
 const md = require('markdown-it')()
 const { PrismaClient } = require('@prisma/client')
 const { customAlphabet } = require('nanoid/async')
@@ -16,52 +17,15 @@ const nanoid = customAlphabet(
   6
 )
 
-const views = require('./views')
 const prisma = new PrismaClient({ log: ['query'] })
 
-fastify.register(require('fastify-cookie'))
-fastify.register(require('@fastify/session'), {
-  secret: 'a secret with minimum length of 32 characters',
-  cookie: {
-    secure: 'auto'
-  }
-  // this needs to use memcached in production
-  // https://www.npmjs.com/package/connect-memcached
-})
-
-fastify.register(require('fastify-formbody'))
 // need to make a Procfile that handles making the secret key and prisma shit
-// fastify might be too technical for this? Asks a lot out of me. serverjs and kraken come with csrf and other guardrails by default
-// lol nah it was fine
-
-// Don't bother with a view system
-// string literals are more powerful
-// just make an html() template literal
-// itll play nicely with the highlighting
-// and be less confusing
-
-fastify.addHook('onSend', (request, reply, payload, done) => {
-  const err = null
-  reply.type('text/html; charset=utf-8')
-  done(err, payload)
-})
+// might be too technical for this? Asks a lot out of me. serverjs and kraken come with csrf and other guardrails by default
 
 // Boring User Crap
 // Users just oauth with Discord for now
 
-fastify.get('/', async (request, reply) => {
-  if (request.session.user) {
-    reply.redirect(`/@${request.session.user.displayId}`)
-  } else {
-    reply.send(views.login())
-  }
-})
-
-fastify.get('/welcome', async (request, reply) => {
-  reply.send(views.registered())
-})
-
-fastify.get('/login', async (request, reply) => {
+get('/login', async (request, reply) => {
   // oauth2 bullshit
   // oauth does this redirect normally
   if (request.session.user) {
@@ -73,7 +37,7 @@ fastify.get('/login', async (request, reply) => {
 
 // this should be a post normally
 // https://github.com/jaredhanson/passport-oauth2 This supports scope, its just not a documented option
-fastify.get('/login/callback', async (request, reply) => {
+get('/login/callback', async (request, reply) => {
   // idk discord is probably going to want this tho
   const discordId = '1235'
   const discordName = 'Sum Guy'
@@ -104,7 +68,7 @@ fastify.get('/login/callback', async (request, reply) => {
   }
 })
 
-fastify.get('/logout', async (request, reply) => {
+get('/logout', async (request, reply) => {
   if (request.session.user) {
     request.destroySession(err => {
       if (err) {
@@ -119,7 +83,7 @@ fastify.get('/logout', async (request, reply) => {
   }
 })
 
-fastify.get('/settings', async (request, reply) => {
+get('/settings', async (request, reply) => {
   const { id } = request.session.user
   if (!id) return null
   const user = await prisma.user.findUnique({ where: { id } })
@@ -128,7 +92,7 @@ fastify.get('/settings', async (request, reply) => {
   reply.send(views.userSettings(user))
 })
 
-fastify.post('/settings', async (request, reply) => {
+post('/settings', async (request, reply) => {
   const { id } = request.session.user
   if (!id) return null
   const { displayId } = request.body
@@ -137,7 +101,7 @@ fastify.post('/settings', async (request, reply) => {
   reply.send(views.userSettings(user))
 })
 
-fastify.get('/@:displayId', async (request, reply) => {
+get('/@:displayId', async (request, reply) => {
   console.log('displayId', request.params.displayId)
   const user = await prisma.user.findUnique({
     where: { displayId: request.params.displayId },
@@ -170,14 +134,14 @@ fastify.get('/@:displayId', async (request, reply) => {
 })
 
 // File Stuff
-fastify.get('/:fileId/raw', async (request, reply) => {
+get('/:fileId/raw', async (request, reply) => {
   const post = await prisma.article.findUnique({
     where: { displayId: request.fileId }
   })
 
   reply.send(views.viewRaw(post))
 })
-fastify.get('/:fileId/edit', async (request, reply) => {
+get('/:fileId/edit', async (request, reply) => {
   const { id } = request.session.user
 
   const post = await prisma.article.findUnique({
@@ -192,7 +156,7 @@ fastify.get('/:fileId/edit', async (request, reply) => {
   }
 })
 
-fastify.post('/:fileId/edit', async (request, reply) => {
+post('/:fileId/edit', async (request, reply) => {
   const { id } = request.session.user
   if (!id) return null
 
@@ -234,7 +198,7 @@ fastify.post('/:fileId/edit', async (request, reply) => {
 // Summary?
 // Emoji?
 // File or Editor type? (Markdown, Plaintext)
-fastify.get('/:fileId/settings', async (request, reply) => {
+get('/:fileId/settings', async (request, reply) => {
   const { id } = request.session.user
   if (!id) return null
 
@@ -244,7 +208,8 @@ fastify.get('/:fileId/settings', async (request, reply) => {
 
   reply.send(views.articleSettings(post))
 })
-fastify.post('/:fileId/settings', async (request, reply) => {
+
+post('/:fileId/settings', async (request, reply) => {
   const { isPrivate } = request.body
   const post = await prisma.article.update({
     where: { displayId: request.fileId },
@@ -255,7 +220,7 @@ fastify.post('/:fileId/settings', async (request, reply) => {
   reply.send(views.articleSettings(post))
 })
 
-fastify.get('/:fileId', async (request, reply) => {
+get('/:fileId', async (request, reply) => {
   const post = await prisma.article.findUnique({
     where: { displayId: request.fileId }
   })
@@ -271,12 +236,31 @@ fastify.get('/:fileId', async (request, reply) => {
 })
 
 // Run the server!
-const start = async () => {
-  try {
-    await fastify.listen(process.env.PORT || 8000)
-  } catch (err) {
-    fastify.log.error(err)
-    process.exit(1)
-  }
-}
-start()
+server(
+  {
+    port: 3000,
+    views: 'views',
+    engine: {
+      html: (file, options, cb) =>
+        es6Renderer(
+          file,
+          {
+            locals: options,
+            partials: { head: './partials/head.html' }
+          },
+          cb
+        )
+    },
+    log: 'debug'
+  },
+  [
+    get('/', async (request, reply) => {
+      if (false) {
+        reply.redirect(`/@${request.session.user.displayId}`)
+      } else {
+        return render('login')
+      }
+    }),
+    get('/welcome', ctx => render('registered'))
+  ]
+)
