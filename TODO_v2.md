@@ -6,7 +6,8 @@ Project Description
 
 ### To Detail
 
-- Role Based Access
+- Role Based Access like letting others edit or specific viewing
+- Edit suggestions workflow
 - More Login Options?
 - LDAP and similar?
 - Theming?
