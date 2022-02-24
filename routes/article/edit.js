@@ -1,57 +1,64 @@
-// File Stuff
-get('/:fileId/raw', async (request, reply) => {
-  const post = await prisma.article.findUnique({
-    where: { displayId: request.fileId }
-  })
+const { get, post } = require('server/router')
+const { render, redirect } = require('server/reply')
+const prisma = require('../../prisma')
+const md = require('markdown-it')()
 
-  reply.send(views.viewRaw(post))
-})
-get('/:fileId/edit', async (request, reply) => {
-  const { id } = request.session.user
+module.exports = [
+  // File Stuff
+  get('/:fileId/raw', async ctx => {
+    const post = await prisma.article.findUnique({
+      where: { displayId: ctx.params.fileId }
+    })
 
-  const post = await prisma.article.findUnique({
-    where: { displayId: request.fileId }
-  })
+    return render('viewRaw', post)
+  }),
+  get('/:fileId/edit', async ctx => {
+    const { id } = ctx.session.user
 
-  if (id !== post.authorId) {
-    reply.redirect(`/${request.fileId}/raw`)
-  } else {
-    // cache will be able to handle anything important here
-    reply.send(views.edit({ post }))
-  }
-})
-post('/:fileId/edit', async (request, reply) => {
-  const { id } = request.session.user
-  if (!id) return null
+    const post = await prisma.article.findUnique({
+      where: { displayId: ctx.params.fileId }
+    })
 
-  // just write the new file to the database
-  // do category and spam detection using https://simplestatistics.org/docs/#bayesianclassifier
-  // break stuff into 4 sets of words, then use BayesianClassifier to get estimates
-  // Object.assign({}, ['a','b','c']); // {0:"a", 1:"b", 2:"c"}
-
-  // https://www.npmjs.com/package/markdown-it-anchor
-  // https://www.npmjs.com/package/markdown-it-emoji
-  // https://www.npmjs.com/package/markdown-it-table-of-contents
-  // https://www.npmjs.com/package/markdown-it-highlightjs
-  // https://www.npmjs.com/package/markdown-it-external-links
-  // https://www.npmjs.com/package/markdown-it-math or https://www.npmjs.com/package/markdown-it-mathjax
-  const rawContent = request.body.article
-  const content = md.render(rawContent)
-
-  const post = await prisma.article.upsert({
-    where: { displayId: request.fileId },
-    update: {
-      rawContent,
-      content
-    },
-    create: {
-      rawContent,
-      content,
-      author: {
-        connect: { id }
-      }
+    if (id !== post.authorId) {
+      return redirect(`/${ctx.params.fileId}/raw`)
+    } else {
+      // cache will be able to handle anything important here
+      return render('edit', post)
     }
-  })
+  }),
+  post('/:fileId/edit', async ctx => {
+    const { id } = ctx.session.user
+    if (!id) return null
 
-  reply.send(views.view(post))
-})
+    // just write the new file to the database
+    // do category and spam detection using https://simplestatistics.org/docs/#bayesianclassifier
+    // break stuff into 4 sets of words, then use BayesianClassifier to get estimates
+    // Object.assign({}, ['a','b','c']); // {0:"a", 1:"b", 2:"c"}
+
+    // https://www.npmjs.com/package/markdown-it-anchor
+    // https://www.npmjs.com/package/markdown-it-emoji
+    // https://www.npmjs.com/package/markdown-it-table-of-contents
+    // https://www.npmjs.com/package/markdown-it-highlightjs
+    // https://www.npmjs.com/package/markdown-it-external-links
+    // https://www.npmjs.com/package/markdown-it-math or https://www.npmjs.com/package/markdown-it-mathjax
+    const rawContent = ctx.body.article
+    const content = md.render(rawContent)
+
+    const post = await prisma.article.upsert({
+      where: { displayId: ctx.params.fileId },
+      update: {
+        rawContent,
+        content
+      },
+      create: {
+        rawContent,
+        content,
+        author: {
+          connect: { id }
+        }
+      }
+    })
+
+    return render('view', post)
+  })
+]

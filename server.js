@@ -5,22 +5,12 @@
 // People can just make index pages if they want to have collections
 
 const server = require('server')
-const { get, post } = server.router
+const { get } = server.router
 const { render, redirect } = server.reply
 const es6Renderer = require('express-es6-template-engine')
-
-const md = require('markdown-it')()
-const { PrismaClient } = require('@prisma/client')
-const { customAlphabet } = require('nanoid/async')
-const nanoid = customAlphabet(
-  'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
-  6
-)
-
-const prisma = new PrismaClient({ log: ['query'] })
+const routes = require('auto-load')('routes')
 
 // need to make a Procfile that handles making the secret key and prisma shit
-// might be too technical for this? Asks a lot out of me. serverjs and kraken come with csrf and other guardrails by default
 
 // Run the server!
 server(
@@ -48,6 +38,12 @@ server(
         return render('login')
       }
     }),
-    get('/welcome', async ctx => render('registered')),
-  ]
+    get('/welcome', async ctx => render('registered'))
+  ],
+  ...routes.login,
+  ...routes.user.settings,
+  ...routes.user.view,
+  ...routes.article.edit,
+  ...routes.article.settings,
+  ...routes.article.view
 )
