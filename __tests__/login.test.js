@@ -45,10 +45,10 @@ describe('Authentication Handlers', () => {
       .expect(303)
   })
 
-  test('does logout callback', async () => {
+  test('does logout', async () => {
     // logout()
     await request(server.app)
-      .get('/login/callback')
+      .get('/logout')
       .expect(303)
   })
 })
