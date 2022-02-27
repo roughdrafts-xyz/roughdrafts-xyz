@@ -2,7 +2,7 @@
   "name": "roughdrafts-git-version",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
     "dev": "node .",
     "test": "jest"

@@ -51,10 +51,3 @@ module.exports = server(
   ...routes.articles,
   error(ctx => status(500).send(ctx.error.message))
 )
-/*
-.then(app => {
-  console.log(
-    `Server launched on http://localhost:${app.server.address().port}/`
-  )
-})
-*/
