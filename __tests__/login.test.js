@@ -1,6 +1,6 @@
 const request = require('supertest')
 const serverPromise = require('../server')
-const prisma = require('../prismaMock')
+const prisma = require('../prisma')
 
 let server
 
@@ -15,6 +15,7 @@ describe('Authentication Handlers', () => {
 
   test('redirects login', async () => {
     // login()
+    prisma.user.findUnique = jest.fn(() => null)
     await request(server.app)
       .get('/login')
       .expect(303)
@@ -32,12 +33,13 @@ describe('Authentication Handlers', () => {
     await request(server.app)
       .get('/login/callback')
       .expect(303)
+    jest.unmock('../prisma')
   })
 
   test('does login callback with existing user', async () => {
     // loginCallback()
     // needs Discord oauth magic
-    prisma.user.findUnique = jest.fn(() => null)
+    prisma.user.findUnique = jest.fn(() => ({ displayId: '1234' }))
     await request(server.app)
       .get('/login/callback')
       .expect(303)

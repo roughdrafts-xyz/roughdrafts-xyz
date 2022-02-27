@@ -24,6 +24,7 @@ const loginCallback = async ctx => {
   const discordId = '1235'
   const discordName = 'Sum Guy'
   let user = await prisma.user.findUnique({ where: { discordId } })
+  console.log('user', user)
   let isNew = false
   if (!user) {
     user = await prisma.user.create({
