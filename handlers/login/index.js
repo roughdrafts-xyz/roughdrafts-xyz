@@ -10,9 +10,9 @@ const login = async ctx => {
   // oauth2 bullshit
   // oauth does this redirect normally
   if (ctx.session.user) {
-    return redirect(`/@${ctx.session.user.displayId}`)
+    return redirect(303, `/@${ctx.session.user.displayId}`)
   } else {
-    return redirect('/login/callback')
+    return redirect(303, '/login/callback')
   }
 }
 

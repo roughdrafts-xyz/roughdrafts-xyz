@@ -1,4 +1,3 @@
-const { get } = require('server/router')
 const { render } = require('server/reply')
 const prisma = require('../../prisma')
 
@@ -32,6 +31,5 @@ const viewUser = async ctx => {
 }
 
 module.exports = {
-  viewUser,
-  routes: [get('/@:displayId', viewUser)]
+  viewUser
 }

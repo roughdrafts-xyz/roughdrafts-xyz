@@ -1,8 +1,21 @@
-// const { login, loginCallback, logout } = require('./handlers')
+const request = require('supertest')
+const serverPromise = require('../server')
+
+let server
 describe('Authentication Handlers', () => {
-  test('redirects login', () => {
+  beforeAll(async () => {
+    server = await serverPromise
+  })
+
+  afterAll(async () => {
+    await server.close()
+  })
+
+  test('redirects login', async () => {
     // login()
-    expect(true).toEqual(true)
+    await request(server.app)
+      .get('/login')
+      .expect(303)
   })
 
   test('does login callback', () => {

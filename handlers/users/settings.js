@@ -1,4 +1,3 @@
-const { get, post } = require('server/router')
 const { render } = require('server/reply')
 const prisma = require('../../prisma')
 
@@ -22,6 +21,5 @@ const updateSettings = async ctx => {
 
 module.exports = {
   viewSettings,
-  updateSettings,
-  routes: [get('/settings', viewSettings), post('/settings', updateSettings)]
+  updateSettings
 }

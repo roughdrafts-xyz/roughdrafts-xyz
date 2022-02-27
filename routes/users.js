@@ -1,8 +1,8 @@
-const { get } = require('server/router')
-const { login, loginCallback, logout } = require('../handlers/login')
+const { get, post } = require('server/router')
+const handlers = require('auto-load')('handlers/users')
 
 module.exports = [
-  get('/login', login),
-  get('/login/callback', loginCallback),
-  get('/logout', logout)
+  get('/@:displayId', handlers.view.viewUser),
+  get('/settings', handlers.settings.viewSettings),
+  post('/settings', handlers.settings.updateSettings)
 ]

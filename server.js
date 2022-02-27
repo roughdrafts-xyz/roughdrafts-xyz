@@ -5,8 +5,8 @@
 // People can just make index pages if they want to have collections
 
 const server = require('server')
-const { get } = server.router
-const { render, redirect } = server.reply
+const { get, error } = server.router
+const { status, render, redirect } = server.reply
 const es6Renderer = require('express-es6-template-engine')
 const routes = require('auto-load')('routes')
 
@@ -47,9 +47,15 @@ module.exports = server(
     }),
     get('/welcome', async ctx => render('registered'))
   ],
-  ...routes.login
-).then(app => {
+  ...routes.login,
+  ...routes.users,
+  ...routes.articles,
+  error(ctx => status(500).send(ctx.error.message))
+)
+/*
+.then(app => {
   console.log(
     `Server launched on http://localhost:${app.server.address().port}/`
   )
 })
+*/
