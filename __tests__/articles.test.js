@@ -1,5 +1,6 @@
 const request = require('supertest')
 const serverPromise = require('../server')
+const prisma = require('../prisma')
 
 let server
 // const { login, loginCallback, logout } = require('./handlers')

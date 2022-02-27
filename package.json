@@ -23,7 +23,8 @@
     "nanoid": "^3.3.1",
     "prisma": "^3.9.2",
     "server": "^1.0.37",
-    "supertest": "^6.2.2"
+    "supertest": "^6.2.2",
+    "supertest-session": "^4.1.0"
   },
   "devDependencies": {
     "jest": "^27.5.1",
