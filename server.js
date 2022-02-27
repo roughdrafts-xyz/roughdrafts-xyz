@@ -33,8 +33,7 @@ module.exports = server(
           },
           cb
         )
-    },
-    log: 'debug'
+    }
   },
   [
     get('/', async ctx => {
