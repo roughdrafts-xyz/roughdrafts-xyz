@@ -9,10 +9,17 @@ const getSettings = async ctx => {
     where: { displayId: ctx.params.fileId }
   })
 
-  return render('articleSettings', post)
+  if (id !== post.authorId) {
+    return null
+  } else {
+    return render('articleSettings', post)
+  }
 }
 
 const updateSettings = async ctx => {
+  const { id } = ctx.session.user
+  if (!id) return null
+
   const { isPrivate } = ctx.body
   const post = await prisma.article.update({
     where: { displayId: ctx.params.fileId },
@@ -21,9 +28,13 @@ const updateSettings = async ctx => {
     }
   })
 
-  return render('articleSettings', post)
+  if (id !== post.authorId) {
+    return null
+  } else {
+    return render('articleSettings', post)
+  }
 }
-module.exports = [
+module.exports = {
   // Private or Public Post
   // Title
   // Eventually, RBAC stuff?
@@ -32,4 +43,4 @@ module.exports = [
   // File or Editor type? (Markdown, Plaintext)
   getSettings,
   updateSettings
-]
+}

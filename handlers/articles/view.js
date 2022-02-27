@@ -2,7 +2,6 @@ const { render } = require('server/reply')
 const prisma = require('../../prisma')
 
 const viewFile = async ctx => {
-  console.log('fileId', ctx.params.fileId)
   const post = await prisma.article.findUnique({
     where: { displayId: ctx.params.fileId }
   })

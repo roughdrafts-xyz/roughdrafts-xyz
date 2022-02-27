@@ -1,10 +1,8 @@
 const request = require('supertest')
 const serverPromise = require('../server')
 const prisma = require('../prisma')
-const session = require('supertest-session')
 
 let server
-let authSession = null
 
 const testUser = {
   id: 1,
@@ -22,7 +20,7 @@ const testUser = {
     }
   ]
 }
-// const { login, loginCallback, logout } = require('./handlers')
+
 describe('User Handlers', () => {
   beforeAll(async () => {
     server = await serverPromise
@@ -34,24 +32,9 @@ describe('User Handlers', () => {
 
   test('Displays User Page', async () => {
     prisma.user.findUnique = jest.fn(() => testUser)
-    await request(server.app)
+    const res = await request(server.app)
       .get('/@1234')
       .expect(200)
-  })
-  describe('Authenticated User Handlers', () => {
-    beforeAll(async () => {
-      authSession = session(server.app)
-      await authSession.get('/login/callback').expect(303)
-    })
-
-    test('Displays User Settings Page', async () => {
-      prisma.user.findUnique = jest.fn(() => testUser)
-      await authSession.get('/settings').expect(200)
-    })
-
-    test('Updates User Settings and Displays Updated User Settings Page', async () => {
-      prisma.user.findUnique = jest.fn(() => testUser)
-      await authSession.get('/settings').expect(200)
-    })
+    expect(res.text).toMatch(testUser.profile.name)
   })
 })

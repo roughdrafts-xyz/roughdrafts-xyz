@@ -39,7 +39,7 @@ const updateArticle = async ctx => {
   // https://www.npmjs.com/package/markdown-it-highlightjs
   // https://www.npmjs.com/package/markdown-it-external-links
   // https://www.npmjs.com/package/markdown-it-math or https://www.npmjs.com/package/markdown-it-mathjax
-  const rawContent = ctx.body.article
+  const rawContent = ctx.body.content
   const content = md.render(rawContent)
 
   const post = await prisma.article.upsert({
