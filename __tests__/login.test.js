@@ -1,7 +1,9 @@
 const request = require('supertest')
 const serverPromise = require('../server')
+const prisma = require('../prismaMock')
 
 let server
+
 describe('Authentication Handlers', () => {
   beforeAll(async () => {
     server = await serverPromise
@@ -18,14 +20,33 @@ describe('Authentication Handlers', () => {
       .expect(303)
   })
 
-  test('does login callback', () => {
+  test.todo(
+    'login todos should actually mock and try out different login states'
+  )
+  test.todo('login needs to actually use Discord Oauth magic')
+  test('does login callback with new user', async () => {
     // loginCallback()
     // needs Discord oauth magic
-    expect(false).toEqual(true)
+    prisma.user.findUnique = jest.fn(() => null)
+    prisma.user.create = jest.fn(() => ({ displayId: '1234' }))
+    await request(server.app)
+      .get('/login/callback')
+      .expect(303)
   })
 
-  test('does login callback', () => {
+  test('does login callback with existing user', async () => {
+    // loginCallback()
+    // needs Discord oauth magic
+    prisma.user.findUnique = jest.fn(() => null)
+    await request(server.app)
+      .get('/login/callback')
+      .expect(303)
+  })
+
+  test('does logout callback', async () => {
     // logout()
-    expect(true).toEqual(true)
+    await request(server.app)
+      .get('/login/callback')
+      .expect(303)
   })
 })

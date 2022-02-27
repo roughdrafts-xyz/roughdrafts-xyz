@@ -42,11 +42,11 @@ const loginCallback = async ctx => {
   // ah shit we need cookies or something
   ctx.session.user = user
   if (isNew) {
-    return redirect('/welcome')
+    return redirect(303, '/welcome')
   } else if (ctx.query.redirect) {
-    return redirect(ctx.query.redirect)
+    return redirect(303, ctx.query.redirect)
   } else {
-    return redirect(`/@${user.displayId}`)
+    return redirect(303, `/@${user.displayId}`)
   }
 }
 
@@ -56,11 +56,11 @@ const logout = async ctx => {
       if (err) {
         return redirect(500, '/error')
       } else {
-        return redirect('/')
+        return redirect(303, '/')
       }
     })
   } else {
-    return redirect('/')
+    return redirect(303, '/')
   }
 }
 module.exports = {
