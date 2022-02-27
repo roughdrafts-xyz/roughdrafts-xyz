@@ -13,9 +13,9 @@ const routes = require('auto-load')('routes')
 // need to make a Procfile that handles making the secret key and prisma shit
 
 // Run the server!
-server(
+module.exports = server(
   {
-    port: 3000,
+    port: 0,
     views: 'views',
     favicon: './favicon.png',
     session: {
@@ -38,7 +38,6 @@ server(
   },
   [
     get('/', async ctx => {
-      console.log('slash')
       if (ctx.session.user) {
         console.log('ctx session', ctx.session.user)
         return redirect(`/@${ctx.session.user.displayId}`)
@@ -48,10 +47,9 @@ server(
     }),
     get('/welcome', async ctx => render('registered'))
   ],
-  ...routes.login,
-  ...routes.user.settings,
-  ...routes.user.view,
-  ...routes.article.edit,
-  ...routes.article.settings,
-  ...routes.article.view
-)
+  ...routes.login
+).then(app => {
+  console.log(
+    `Server launched on http://localhost:${app.server.address().port}/`
+  )
+})
