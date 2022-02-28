@@ -13,6 +13,7 @@ Project Description
 - Theming?
 - Alternative interfaces like git
 - File History
+- Ability to import notes feature
 
 ### Todo
 

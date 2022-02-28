@@ -3,6 +3,12 @@
 
 <head>
   ${head}
+  <style>
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+  </style>
 </head>
 
 <body>
@@ -13,7 +19,11 @@
     </nav>
   </header>
   <form action="/settings" method="post">
-    <label>Display Name</label> <input type="text" name="displayId" value=${displayId} />
+    <label>Display Name <input type="text" name="profile.name" value=${profile.name} /></label>
+    <label>Summary <input type="text" name="profile.summary" value=${profile.summary} /></label>
+    <label>URL Endpoint <input type="text" name="displayId" value=${displayId} /></label>
+    <label>Download Notes<button>As Zip File</button></label>
+    <label>Delete Account<button>Delete Account</button></label>
     <button>Save</button>
   </form>
 </body>
