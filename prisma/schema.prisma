@@ -12,8 +12,8 @@ model Article {
   displayId String? @unique // For urls and allowing vanity urls
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  title String?
-  summary String?
+  title String
+  summary String @default("")
   content String
   rawContent String
   private Boolean @default(true)

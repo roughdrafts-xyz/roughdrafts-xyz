@@ -12,12 +12,10 @@
 </head>
 
 <body>
-    <nav>
-        <a href="/">Home</a>
-    </nav>
     <header>
         <h2>${title}</h2>
         ${isUser ? /* html */`<nav>
+            <a href="/">Home</a>
             <a href="/${displayId}/settings">Settings</a>
             <a href="/${displayId}/edit">Edit</a>
         </nav>`:''}

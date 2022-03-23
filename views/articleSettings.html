@@ -3,18 +3,47 @@
 
 <head>
   ${head}
+  <style>
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    input:not([type='checkbox']) {
+      width: 100%;
+    }
+
+    input[type='checkbox'] {
+      float: right;
+    }
+
+    label>button {
+      float: right;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+    }
+  </style>
 </head>
 
 <body>
   <header>
     <h2>Editing Settings for ${title}</h2>
     <nav>
-      <button>Edit</button>
-      <button>Cancel</button>
+      <a href="/${displayId}">Cancel</a>
     </nav>
   </header>
-  <form action="/${title}/settings" method="post">
-    <label>Private?</label> <input type="checkbox" name="private" value=${private} />
+  <form action="/${displayId}/settings" method="post">
+    <label>Title <small>(Required)</small><input type="text" name="title" value="${title}"" /></label>
+    <label>Summary <small>(Leave Blank for Automatic Summary)</small> <input type=" text" name="summary"
+        value="${summary}"" /></label>
+    <label>URL Endpoint
+      <small>(Required, Must be Unique, No Spaces, Alphanumeric characters Only)</small>
+      <input type=" text" name="displayId" value="${displayId}" />
+    </label>
+    <label>Private? <input type="checkbox" name="private" value=${private} /></label>
     <button>Save</button>
   </form>
 </body>
