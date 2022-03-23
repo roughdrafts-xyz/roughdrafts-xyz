@@ -1,10 +1,6 @@
 const { redirect } = require('server/reply')
 const prisma = require('../../prisma')
-const { customAlphabet } = require('nanoid/async')
-const nanoid = customAlphabet(
-  'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
-  6
-)
+const nanoid = require('../../nanoid')
 
 const login = async ctx => {
   // oauth2 bullshit

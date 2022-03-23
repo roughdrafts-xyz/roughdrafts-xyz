@@ -1,11 +1,15 @@
 const { render } = require('server/reply')
 const prisma = require('../../prisma')
+const nanoid = require('../../nanoid')
 
 const viewUser = async ctx => {
   const user = await prisma.user.findUnique({
     where: { displayId: ctx.params.displayId },
     include: { articles: true, profile: true }
   })
+  const isUser = ctx.session?.user?.id === user.id
+  // TODO see if theres a way to not do this, it might be a memory leak source.
+  const newArticleId = isUser ? await nanoid() : ''
 
   // pagination
   // https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination
@@ -26,7 +30,8 @@ const viewUser = async ctx => {
   */
   return render('home', {
     ...user,
-    isUser: ctx.session?.user?.id === user.id
+    isUser,
+    newArticleId
   })
 }
 

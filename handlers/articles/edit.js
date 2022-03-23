@@ -10,12 +10,31 @@ const getRaw = async ctx => {
   return render('viewRaw', post)
 }
 
+const getEmptyEditor = async ctx => {
+  const post = await prisma.article.findUnique({
+    where: { displayId: ctx.params.displayId }
+  })
+
+  if (!post) {
+    return render('new', {
+      displayId: ctx.params.displayId,
+      title: 'New Article',
+      rawContent: ''
+    })
+  } else {
+    return redirect(`/${ctx.params.displayId}/edit`)
+  }
+}
 const getEditor = async ctx => {
   const { id } = ctx.session.user
 
   const post = await prisma.article.findUnique({
-    where: { displayId: ctx.params.fileId }
+    where: { displayId: ctx.params.displayId }
   })
+
+  if (!post) {
+    return redirect(`${ctx.params.displayId}/new`)
+  }
 
   if (id !== post.authorId) {
     return redirect(`/${ctx.params.fileId}/raw`)
@@ -24,6 +43,7 @@ const getEditor = async ctx => {
     return render('edit', post)
   }
 }
+
 const updateArticle = async ctx => {
   const { id } = ctx.session.user
   if (!id) return null
@@ -39,29 +59,33 @@ const updateArticle = async ctx => {
   // https://www.npmjs.com/package/markdown-it-highlightjs
   // https://www.npmjs.com/package/markdown-it-external-links
   // https://www.npmjs.com/package/markdown-it-math or https://www.npmjs.com/package/markdown-it-mathjax
-  const rawContent = ctx.body.content
+  const rawContent = ctx.body.article
   const content = md.render(rawContent)
 
-  const post = await prisma.article.upsert({
-    where: { displayId: ctx.params.fileId },
+  await prisma.article.upsert({
+    where: { displayId: ctx.params.displayId },
     update: {
       rawContent,
       content
     },
     create: {
+      displayId: ctx.params.displayId,
+      title: ctx.body.title,
       rawContent,
       content,
+      summary: '',
       author: {
         connect: { id }
       }
     }
   })
 
-  return render('view', post)
+  return redirect(`/${ctx.params.displayId}`)
 }
 module.exports = {
   // File Stuff
   getRaw,
   getEditor,
+  getEmptyEditor,
   updateArticle
 }

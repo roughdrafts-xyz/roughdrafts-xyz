@@ -26,13 +26,13 @@
   <header>
     <h2>Editing ${title}</h2>
     <nav>
-      <button>Settings</button>
       <button>Cancel</button>
     </nav>
   </header>
   <form action="/${displayId}/edit" method="post">
     <textarea name="article">${rawContent}</textarea>
     <button>Save</button>
+    <input type="hidden" name="title" value="${title}" />
     <input type="hidden" name="_csrf" value="${csrf}" />
   </form>
 </body>
@@ -41,7 +41,7 @@
     autofocus: true,
     autosave: {
       enabled: true,
-      uniqueId: '${id}',
+      uniqueId: '${displayId}',
       text: 'Last saved locally at '
     }
   })

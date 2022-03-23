@@ -3,7 +3,7 @@ const prisma = require('../../prisma')
 
 const viewFile = async ctx => {
   const post = await prisma.article.findUnique({
-    where: { displayId: ctx.params.fileId }
+    where: { displayId: ctx.params.displayId }
   })
 
   return render('view', post)
