@@ -6,8 +6,10 @@ const getSettings = async ctx => {
   if (!id) return null
 
   const post = await prisma.article.findUnique({
-    where: { displayId: ctx.params.fileId }
+    where: { displayId: ctx.params.displayId }
   })
+
+  console.log(post)
 
   if (id !== post.authorId) {
     return null
@@ -22,7 +24,7 @@ const updateSettings = async ctx => {
 
   const { isPrivate } = ctx.body
   const post = await prisma.article.update({
-    where: { displayId: ctx.params.fileId },
+    where: { displayId: ctx.params.displayId },
     data: {
       isPrivate
     }

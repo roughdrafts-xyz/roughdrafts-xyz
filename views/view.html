@@ -17,10 +17,10 @@
     </nav>
     <header>
         <h2>${title}</h2>
-        <nav>
-            <button>Settings</button>
-            <button>Edit</button>
-        </nav>
+        ${isUser ? /* html */`<nav>
+            <a href="/${displayId}/settings">Settings</a>
+            <a href="/${displayId}/edit">Edit</a>
+        </nav>`:''}
     </header>
     <article>
         ${content}
