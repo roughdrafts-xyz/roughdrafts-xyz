@@ -9,8 +9,6 @@ const getSettings = async ctx => {
     where: { displayId: ctx.params.displayId }
   })
 
-  console.log(post)
-
   if (id !== post.authorId) {
     return null
   } else {
@@ -22,11 +20,14 @@ const updateSettings = async ctx => {
   const { id } = ctx.session.user
   if (!id) return null
 
-  const { isPrivate } = ctx.body
+  const { title, summary, displayId, visibility } = ctx.body
   const post = await prisma.article.update({
     where: { displayId: ctx.params.displayId },
     data: {
-      isPrivate
+      title,
+      summary,
+      displayId,
+      visibility
     }
   })
 

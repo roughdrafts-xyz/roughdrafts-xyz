@@ -16,7 +16,7 @@ model Article {
   summary String @default("")
   content String
   rawContent String
-  private Boolean @default(true)
+  visibility String @default("unlisted")
   author User @relation(fields: [authorId], references: [id])
   authorId Int
 }
@@ -24,7 +24,7 @@ model Article {
 model Profile {
   id Int @id @default(autoincrement())
   name String
-  summary String?
+  summary String @default("")
   user User @relation(fields: [userId], references: [id])
   userId Int @unique
 }

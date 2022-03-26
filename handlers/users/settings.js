@@ -14,15 +14,17 @@ const viewSettings = async ctx => {
 }
 
 const updateSettings = async ctx => {
-  console.log(ctx.body)
-  /*
   const { id } = ctx.session.user
   if (!id) return null
-  const { displayId } = ctx.body
-  const user = await prisma.user.update({ where: id, data: { displayId } })
+  const { displayId, name, summary } = ctx.body
+  const user = await prisma.user.update({
+    where: { id },
+    data: { displayId, profile: { update: { name, summary } } },
+    include: { profile: true }
+  })
+  ctx.session.user = user
   // do settings updates
   return render('userSettings', user)
-  */
 }
 
 module.exports = {

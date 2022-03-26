@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "node .",
+    "dev": "PORT=3000 node .",
     "test": "jest"
   },
   "standard": {

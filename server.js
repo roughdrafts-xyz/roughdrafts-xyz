@@ -15,7 +15,7 @@ const routes = require('auto-load')('routes')
 // Run the server!
 module.exports = server(
   {
-    port: 0,
+    port: process.env.PORT || 0,
     views: 'views',
     favicon: './favicon.png',
     session: {
@@ -38,7 +38,6 @@ module.exports = server(
   [
     get('/', async ctx => {
       if (ctx.session.user) {
-        console.log('ctx session', ctx.session.user)
         return redirect(`/@${ctx.session.user.displayId}`)
       } else {
         return render('login')
@@ -49,5 +48,8 @@ module.exports = server(
   ...routes.login,
   ...routes.users,
   ...routes.articles,
-  error(ctx => status(500).send(ctx.error.message))
+  error(ctx => {
+    console.error(ctx.error.message)
+    return status(500).send(`<pre>${ctx.error.message}</pre>`)
+  })
 )

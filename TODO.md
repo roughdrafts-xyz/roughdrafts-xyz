@@ -8,6 +8,7 @@ Project Description
 
 ### Todo
 
+- Add input verification to settings pages  
 - Add Passport & Discord Oauth  
 - Improve Unit Tests for the Views  
 - Prep Procfile and ENV for Piku needs  

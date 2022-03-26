@@ -13,10 +13,6 @@
       width: 100%;
     }
 
-    label>button {
-      float: right;
-    }
-
     header {
       display: flex;
       justify-content: space-between;
@@ -32,12 +28,12 @@
     </nav>
   </header>
   <form action="/settings" method="post">
-    <label>Display Name (Required)<input type="text" name="profile.name" value="${profile.name}" /></label>
-    <label>Summary (Leave blank for none)<input type="text" name="profile.summary" value="${profile.summary}" /></label>
+    <label>Display Name (Required)<input type="text" name="name" value="${profile.name}" /></label>
+    <label>Summary (Leave blank for none)<input type="text" name="summary" value="${profile.summary}" /></label>
     <label>URL Endpoint (Required, Must be Unique No Spaces, Alphanumeric characters Only)<input type="text"
         name="displayId" value="${displayId}" /></label>
-    <label>Download Notes<button>As Zip File</button></label>
-    <label>Delete Account<button>Delete Account</button></label>
+    <label><a href="#">Download Notes as Zip File</a></label>
+    <label><a href="#">Delete Account</a></label>
     <button>Save</button>
     <input type="hidden" name="_csrf" value="${csrf}" />
   </form>

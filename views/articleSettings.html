@@ -4,21 +4,14 @@
 <head>
   ${head}
   <style>
-    form {
+    form,
+    fieldset {
       display: flex;
       flex-direction: column;
     }
 
-    input:not([type='checkbox']) {
+    input:not([type='radio']) {
       width: 100%;
-    }
-
-    input[type='checkbox'] {
-      float: right;
-    }
-
-    label>button {
-      float: right;
     }
 
     header {
@@ -43,8 +36,15 @@
       <small>(Required, Must be Unique, No Spaces, Alphanumeric characters Only)</small>
       <input type=" text" name="displayId" value="${displayId}" />
     </label>
-    <label>Private? <input type="checkbox" name="private" value=${private} /></label>
+    <fieldset>
+      <legend>Visibility</legend>
+      <label><input type="radio" name="visibility" value="unlisted" ${visibility==='unlisted' ?'checked':''} />
+        Unlisted</label>
+      <label><input type="radio" name="visibility" value="public" ${visibility==='public' ?'checked':''} />
+        Public</label>
+    </fieldset>
     <button>Save</button>
+    <input type="hidden" name="_csrf" value="${csrf}" />
   </form>
 </body>
 

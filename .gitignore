@@ -1,5 +1,6 @@
 ENV
 *.sqlite3
+*.sqlite3-journal
 
 # Logs
 logs
