@@ -5,7 +5,7 @@ const nanoid = require('../../nanoid')
 const viewUser = async ctx => {
   const user = await prisma.user.findUnique({
     where: { displayId: ctx.params.displayId },
-    include: { articles: true, profile: true }
+    include: { articles: true }
   })
   const isUser = ctx.session?.user?.id === user.id
   // TODO see if theres a way to not do this, it might be a memory leak source.

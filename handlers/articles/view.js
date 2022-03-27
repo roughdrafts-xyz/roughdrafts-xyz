@@ -3,7 +3,10 @@ const prisma = require('../../prisma')
 
 const viewFile = async ctx => {
   const post = await prisma.article.findUnique({
-    where: { displayId: ctx.params.displayId }
+    where: { displayId: ctx.params.displayId },
+    include: {
+      author: true
+    }
   })
   const isUser = ctx.session?.user?.id === post.authorId
 

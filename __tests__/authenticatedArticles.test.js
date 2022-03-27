@@ -19,11 +19,9 @@ const testArticle = {
 const testUser = {
   id: 1,
   displayId: '1234',
-  profile: {
-    name: 'Test User',
-    summary:
-      'Two thousand or so words to test out the summary of this fake user.'
-  },
+  name: 'Test User',
+  summary:
+    'Two thousand or so words to test out the summary of this fake user.',
   articles: [
     {
       title: '🍎 Apple',

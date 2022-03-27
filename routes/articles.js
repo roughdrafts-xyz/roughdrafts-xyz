@@ -8,5 +8,6 @@ module.exports = [
   get('/:displayId/raw', handlers.edit.getRaw),
   get('/:displayId/new', handlers.edit.getEmptyEditor),
   get('/:displayId/edit', handlers.edit.getEditor),
-  post('/:displayId/edit', handlers.edit.updateArticle)
+  post('/:displayId/edit', handlers.edit.updateArticle),
+  post('/:displayId/delete', handlers.edit.deleteArticle)
 ]

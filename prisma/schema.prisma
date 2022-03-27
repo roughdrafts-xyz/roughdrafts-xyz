@@ -21,18 +21,11 @@ model Article {
   authorId Int
 }
 
-model Profile {
-  id Int @id @default(autoincrement())
-  name String
-  summary String @default("")
-  user User @relation(fields: [userId], references: [id])
-  userId Int @unique
-}
-
 model User {
   id Int @id @default(autoincrement())
   discordId String? @unique
   displayId String? @unique // For urls and allowing vanity urls
+  name String @default("Anonymous")
+  summary String @default("This user has not set a summary.")
   articles Article[]
-  profile Profile?
 }

@@ -82,10 +82,17 @@ const updateArticle = async ctx => {
 
   return redirect(`/${ctx.params.displayId}`)
 }
+
+const deleteArticle = async ctx => {
+  const { id } = ctx.session.user
+  if (!id) return null
+}
+
 module.exports = {
   // File Stuff
   getRaw,
   getEditor,
   getEmptyEditor,
-  updateArticle
+  updateArticle,
+  deleteArticle
 }

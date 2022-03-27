@@ -7,11 +7,9 @@ let server
 const testUser = {
   id: 1,
   displayId: '1234',
-  profile: {
-    name: 'Test User',
-    summary:
-      'Two thousand or so words to test out the summary of this fake user.'
-  },
+  name: 'Test User',
+  summary:
+    'Two thousand or so words to test out the summary of this fake user.',
   articles: [
     {
       title: '🍎 Apple',
@@ -35,6 +33,6 @@ describe('User Handlers', () => {
     const res = await request(server.app)
       .get('/@1234')
       .expect(200)
-    expect(res.text).toMatch(testUser.profile.name)
+    expect(res.text).toMatch(testUser.name)
   })
 })

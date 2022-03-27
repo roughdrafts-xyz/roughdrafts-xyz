@@ -18,6 +18,12 @@
       display: flex;
       justify-content: space-between;
     }
+
+    .deleteArticle {
+      padding-top: 1.5em;
+      margin-top: 1.5em;
+      border-top: 0.25ch dashed black;
+    }
   </style>
 </head>
 
@@ -44,6 +50,19 @@
         Public</label>
     </fieldset>
     <button>Save</button>
+    <input type="hidden" name="_csrf" value="${csrf}" />
+  </form>
+  <form action="/${displayId}/delete" method="post" class="deleteArticle">
+    <fieldset>
+      <legend>
+        Delete Article
+      </legend>
+      <label>
+        Please Enter ${displayId} to Confirm
+        <input type="text" name="deleteMe" />
+      </label>
+    </fieldset>
+    <button>Delete</button>
     <input type="hidden" name="_csrf" value="${csrf}" />
   </form>
 </body>

@@ -17,6 +17,12 @@
       display: flex;
       justify-content: space-between;
     }
+
+    .deleteAccount {
+      padding-top: 1.5em;
+      margin-top: 1.5em;
+      border-top: 0.25ch dashed black;
+    }
   </style>
 </head>
 
@@ -28,13 +34,25 @@
     </nav>
   </header>
   <form action="/settings" method="post">
-    <label>Display Name (Required)<input type="text" name="name" value="${profile.name}" /></label>
-    <label>Summary (Leave blank for none)<input type="text" name="summary" value="${profile.summary}" /></label>
+    <label>Display Name (Required)<input type="text" name="name" value="${name}" /></label>
+    <label>Summary (Leave blank for none)<input type="text" name="summary" value="${summary}" /></label>
     <label>URL Endpoint (Required, Must be Unique No Spaces, Alphanumeric characters Only)<input type="text"
         name="displayId" value="${displayId}" /></label>
-    <label><a href="#">Download Notes as Zip File</a></label>
-    <label><a href="#">Delete Account</a></label>
+    <label><a href="/@${displayId}/download.zip">Download Notes as Zip File</a></label>
     <button>Save</button>
+    <input type="hidden" name="_csrf" value="${csrf}" />
+  </form>
+  <form action="/@${displayId}/delete" method="post" class="deleteAccount">
+    <fieldset>
+      <legend>
+        Delete Account
+      </legend>
+      <label>
+        Please Enter ${displayId} to Confirm
+        <input type="text" name="deleteMe" />
+      </label>
+    </fieldset>
+    <button>Delete</button>
     <input type="hidden" name="_csrf" value="${csrf}" />
   </form>
 </body>

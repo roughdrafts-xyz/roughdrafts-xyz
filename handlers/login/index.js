@@ -26,11 +26,7 @@ const loginCallback = async ctx => {
       data: {
         discordId,
         displayId: await nanoid(),
-        profile: {
-          create: {
-            name: discordName
-          }
-        }
+        name: discordName
       }
     })
     isNew = true
