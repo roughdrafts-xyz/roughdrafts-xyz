@@ -24,6 +24,10 @@
       margin-top: 1.5em;
       border-top: 0.25ch dashed black;
     }
+
+    .visibilityLabel {
+      text-transform: capitalize;
+    }
   </style>
 </head>
 
@@ -44,10 +48,10 @@
     </label>
     <fieldset>
       <legend>Visibility</legend>
-      <label><input type="radio" name="visibility" value="unlisted" ${visibility==='unlisted' ?'checked':''} />
-        Unlisted</label>
-      <label><input type="radio" name="visibility" value="public" ${visibility==='public' ?'checked':''} />
-        Public</label>
+      ${['private', 'unlisted', 'public'].map((curr)=>/*html*/`<label class="visibilityLabel">
+        <input type="radio" name="visibility" value="${curr}" ${visibility===curr ?'checked':''} />
+        ${curr}
+      </label>`).join('\n')}
     </fieldset>
     <button>Save</button>
     <input type="hidden" name="_csrf" value="${csrf}" />

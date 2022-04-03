@@ -2,11 +2,33 @@ const { render, redirect } = require('server/reply')
 const prisma = require('../../prisma')
 const md = require('markdown-it')()
 
+const shouldDisplay = (ctx, post) => {
+  const isUser = ctx.session?.user?.id === post.authorId
+
+  if (!post) return true
+
+  if (!isUser) {
+    if (post.visibility === 'private') return false
+    return true
+  } else {
+    return false
+  }
+}
+
+const shouldModify = (ctx, post) => {
+  const isUser = ctx.session?.user?.id === post.authorId
+
+  if (!post) return true
+  if (isUser) return true
+  return false
+}
+
 const getRaw = async ctx => {
   const post = await prisma.article.findUnique({
     where: { displayId: ctx.params.fileId }
   })
 
+  if (!shouldDisplay(ctx, post)) return null
   return render('viewRaw', post)
 }
 
@@ -15,6 +37,7 @@ const getEmptyEditor = async ctx => {
     where: { displayId: ctx.params.displayId }
   })
 
+  if (!shouldDisplay(ctx, post)) return null
   if (!post) {
     return render('new', {
       displayId: ctx.params.displayId,
@@ -32,6 +55,7 @@ const getEditor = async ctx => {
     where: { displayId: ctx.params.displayId }
   })
 
+  if (!shouldDisplay(ctx, post)) return null
   if (!post) {
     return redirect(`${ctx.params.displayId}/new`)
   }
@@ -48,6 +72,11 @@ const updateArticle = async ctx => {
   const { id } = ctx.session.user
   if (!id) return null
 
+  const post = await prisma.article.findUnique({
+    where: { displayId: ctx.params.displayId }
+  })
+
+  if (!shouldModify(ctx, post)) return null
   // just write the new file to the database
   // do category and spam detection using https://simplestatistics.org/docs/#bayesianclassifier
   // break stuff into 4 sets of words, then use BayesianClassifier to get estimates
@@ -86,6 +115,15 @@ const updateArticle = async ctx => {
 const deleteArticle = async ctx => {
   const { id } = ctx.session.user
   if (!id) return null
+
+  const post = await prisma.article.findUnique({
+    where: { displayId: ctx.params.displayId }
+  })
+
+  if (!shouldModify(ctx, post)) return null
+  if (ctx.body.deleteMe !== post.displayId) return null
+  await prisma.article.delete({ where: { displayId: ctx.params.displayId } })
+  return redirect('/')
 }
 
 module.exports = {

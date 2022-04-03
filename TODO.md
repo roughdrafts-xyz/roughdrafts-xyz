@@ -8,6 +8,7 @@ Project Description
 
 ### Todo
 
+- BUG Editing need hidden for title or something.  
 - Add input verification to settings pages  
 - Add Passport & Discord Oauth  
 - Improve Unit Tests for the Views  

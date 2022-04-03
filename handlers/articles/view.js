@@ -10,6 +10,10 @@ const viewFile = async ctx => {
   })
   const isUser = ctx.session?.user?.id === post.authorId
 
+  if (!isUser) {
+    if (post.visibility === 'private') return null
+  }
+
   return render('view', {
     ...post,
     isUser
