@@ -3,9 +3,9 @@ const prisma = require('../../prisma')
 const md = require('markdown-it')()
 
 const shouldDisplay = (ctx, post) => {
-  const isUser = ctx.session?.user?.id === post.authorId
-
   if (!post) return true
+
+  const isUser = ctx.session?.user?.id === post.authorId
 
   if (!isUser) {
     if (post.visibility === 'private') return false
@@ -16,9 +16,10 @@ const shouldDisplay = (ctx, post) => {
 }
 
 const shouldModify = (ctx, post) => {
+  if (!post) return true
+
   const isUser = ctx.session?.user?.id === post.authorId
 
-  if (!post) return true
   if (isUser) return true
   return false
 }
@@ -55,10 +56,11 @@ const getEditor = async ctx => {
     where: { displayId: ctx.params.displayId }
   })
 
-  if (!shouldDisplay(ctx, post)) return null
   if (!post) {
     return redirect(`${ctx.params.displayId}/new`)
   }
+
+  if (!shouldModify(ctx, post)) return null
 
   if (id !== post.authorId) {
     return redirect(`/${ctx.params.fileId}/raw`)

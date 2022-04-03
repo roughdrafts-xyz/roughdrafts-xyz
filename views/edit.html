@@ -33,6 +33,7 @@
   <form action="/${displayId}/edit" method="post">
     <textarea name="article">${rawContent}</textarea>
     <button>Save</button>
+    <input type="hidden" name="title" value="${title}" />
     <input type="hidden" name="_csrf" value="${csrf}" />
   </form>
 </body>
