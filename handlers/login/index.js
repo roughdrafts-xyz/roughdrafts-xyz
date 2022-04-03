@@ -44,16 +44,9 @@ const loginCallback = async ctx => {
 
 const logout = async ctx => {
   if (ctx.session.user) {
-    ctx.session.destroy(err => {
-      if (err) {
-        return redirect(500, '/error')
-      } else {
-        return redirect(303, '/')
-      }
-    })
-  } else {
-    return redirect(303, '/')
+    ctx.session.destroy(null)
   }
+  return redirect(303, '/')
 }
 module.exports = {
   login,

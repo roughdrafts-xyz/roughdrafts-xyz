@@ -21,6 +21,7 @@ module.exports = server(
     session: {
       secret: 'This is a super very long secret password',
       saveUninitialized: false,
+      unset: 'destroy',
       cookie: { secure: false }
     },
     engine: {
