@@ -26,7 +26,7 @@ const shouldModify = (ctx, post) => {
 
 const getRaw = async ctx => {
   const post = await prisma.article.findUnique({
-    where: { displayId: ctx.params.fileId }
+    where: { displayId: ctx.params.displayId }
   })
 
   if (!shouldDisplay(ctx, post)) return null

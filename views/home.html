@@ -21,16 +21,18 @@
       <a href="/settings">Settings</a>
     </nav>`:''}
   </header>
-  ${isUser ? /* html */ `<section>
-    <a href="/${newArticleId}/new">Add New Article</a>
-  </section>`:''}
-  ${articles.map(
-  curr => /* html */ `<section>
-    <h3><a href="/${curr.displayId}">${curr.title}</a></h3>
-    <span>${curr.summary}</span>
-  </section>`
-  )
-  .join('')}
+  <main>
+    ${isUser ? /* html */ `<section>
+      <a href="/${newArticleId}/new">Add New Article</a>
+    </section>`:''}
+    ${articles.map(
+    curr => /* html */ `<section>
+      <h3><a href="/${curr.displayId}">${curr.title}</a></h3>
+      <span>${curr.summary}</span>
+    </section>`
+    )
+    .join('')}
+  </main>
 </body>
 
 </html>

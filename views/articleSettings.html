@@ -25,6 +25,12 @@
       border-top: 0.25ch dashed black;
     }
 
+    @media(prefers-color-scheme: dark) {
+      .deleteArticle {
+        border-top: 0.25ch dashed white;
+      }
+    }
+
     .visibilityLabel {
       text-transform: capitalize;
     }
@@ -38,37 +44,39 @@
       <a href="/${displayId}">Cancel</a>
     </nav>
   </header>
-  <form action="/${displayId}/settings" method="post">
-    <label>Title <small>(Required)</small><input type="text" name="title" value="${title}"" /></label>
-    <label>Summary <small>(Leave Blank for Automatic Summary)</small> <input type=" text" name="summary"
-        value="${summary}"" /></label>
-    <label>URL Endpoint
-      <small>(Required, Must be Unique, No Spaces, Alphanumeric characters Only)</small>
-      <input type=" text" name="displayId" value="${displayId}" />
-    </label>
-    <fieldset>
-      <legend>Visibility</legend>
-      ${['private', 'unlisted', 'public'].map((curr)=>/*html*/`<label class="visibilityLabel">
-        <input type="radio" name="visibility" value="${curr}" ${visibility===curr ?'checked':''} />
-        ${curr}
-      </label>`).join('\n')}
-    </fieldset>
-    <button>Save</button>
-    <input type="hidden" name="_csrf" value="${csrf}" />
-  </form>
-  <form action="/${displayId}/delete" method="post" class="deleteArticle">
-    <fieldset>
-      <legend>
-        Delete Article
-      </legend>
-      <label>
-        Please Enter ${displayId} to Confirm
-        <input type="text" name="deleteMe" />
+  <main>
+    <form action="/${displayId}/settings" method="post">
+      <label>Title <small>(Required)</small><input type="text" name="title" value="${title}" /></label>
+      <label>Summary <small>(Leave Blank for Automatic Summary)</small> <input name="summary" type="text"
+          value="${summary}" /></label>
+      <label>URL Endpoint
+        <small>(Required, Must be Unique, No Spaces, Alphanumeric characters Only)</small>
+        <input type="text" name="displayId" value="${displayId}" />
       </label>
-    </fieldset>
-    <button>Delete</button>
-    <input type="hidden" name="_csrf" value="${csrf}" />
-  </form>
+      <fieldset>
+        <legend>Visibility</legend>
+        ${['private', 'unlisted', 'public'].map((curr)=>/*html*/`<label class="visibilityLabel">
+          <input type="radio" name="visibility" value="${curr}" ${visibility===curr ?'checked':''} />
+          ${curr}
+        </label>`).join('\n')}
+      </fieldset>
+      <button>Save</button>
+      <input type="hidden" name="_csrf" value="${csrf}" />
+    </form>
+    <form action="/${displayId}/delete" method="post" class="deleteArticle">
+      <fieldset>
+        <legend>
+          Delete Article
+        </legend>
+        <label>
+          Please Enter ${displayId} to Confirm
+          <input type="text" name="deleteMe" />
+        </label>
+      </fieldset>
+      <button>Delete</button>
+      <input type="hidden" name="_csrf" value="${csrf}" />
+    </form>
+  </main>
 </body>
 
 </html>

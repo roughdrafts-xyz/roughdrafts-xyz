@@ -8,7 +8,7 @@ datasource db {
 }
 
 model Article {
-  id Int @id @default(autoincrement())
+  id String @id @default(uuid())
   displayId String? @unique // For urls and allowing vanity urls
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -18,11 +18,11 @@ model Article {
   rawContent String
   visibility String @default("unlisted")
   author User @relation(fields: [authorId], references: [id])
-  authorId Int
+  authorId String
 }
 
 model User {
-  id Int @id @default(autoincrement())
+  id String @id @default(uuid())
   discordId String? @unique
   displayId String? @unique // For urls and allowing vanity urls
   name String @default("Anonymous")
