@@ -17,20 +17,39 @@ const viewSettings = async ctx => {
   })
   if (!user) return null
   // Expose download link to personal sqlite db
-  return render('userSettings', user)
+  return render('userSettings', {
+    ...user,
+    updateStatus: ''
+  })
 }
 
 const updateSettings = async ctx => {
   const { id } = ctx.session.user
   if (!id) return null
   const { displayId, name, summary } = ctx.body
-  const user = await prisma.user.update({
-    where: { id },
-    data: { displayId, name, summary }
-  })
-  ctx.session.user = user
-  // do settings updates
-  return render('userSettings', user)
+  try {
+    const user = await prisma.user.update({
+      where: { id },
+      data: { displayId, name, summary }
+    })
+    ctx.session.user = user
+    // do settings updates
+    return render('userSettings', {
+      ...user,
+      updateStatus:
+        "<section role='status'>Settings saved succesfully.</section>"
+    })
+  } catch (e) {
+    console.error(e)
+    const user = await prisma.user.findUnique({
+      where: { id }
+    })
+    return render('userSettings', {
+      ...user,
+      updateStatus:
+        "<section role='alert'>An error occured. Please try again.</section>"
+    })
+  }
 }
 
 const deleteUser = async ctx => {

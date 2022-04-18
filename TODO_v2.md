@@ -9,11 +9,14 @@ Project Description
 - Role Based Access like letting others edit or specific viewing
 - Edit suggestions workflow
 - More Login Options?
-- LDAP and similar?
-- Theming?
 - Alternative interfaces like git
 - File History
 - Ability to import notes feature
+- Improve Unit Tests for the Views
+- LDAP and similar?
+- Theming?
+- Article tagging
+- Article searching
 
 ### Todo
 

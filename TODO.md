@@ -8,29 +8,30 @@ Project Description
 
 ### Todo
 
-- BUG Editing need hidden for title or something.  
-- Add input verification to settings pages  
-- Add Passport & Discord Oauth  
-- Improve Unit Tests for the Views  
-- Prep Procfile and ENV for Piku needs  
-- Add plugins to markdown-it  
-- Setup Prisma to actually use mysql instead  
-
-### Done ✓
-
-- Swap to Server JS  
-- Organize functions and files  
-- See if theres a view thats just template literals  
-- Find a testing suite (Jest?)  
-- Prepare functions for unit testing  
-- Edit Page (Needs to know if the user is logged in or not)  
-- User Settings (Needs to handle changing display name and vanity settings and allow downloading notes)  
+- Add plugins to markdown-it
+- Add Passport & Discord Oauth
+- Add input verification to settings pages
+- Prep Procfile and ENV for Piku needs
+- Setup Prisma to actually use mysql instead
+- BUG > Title and Name can be blank because '' is a proper string. Normalize data with a middleware?
+- Add styling to update and error reporting
 
 ### Views I don't like yet
 
-- Article Settings (Needs to handle published mode, title, summary, and imply rbac stuff. Also needs ability to delete article. Might need ability to transfer article ownership?)  
-- List of Articles (Needs link to User Settings, search functions, and filtering. Like tags & published status.)  
-- Welcome Page (Explains nothing)  
-- New User Page (Should explain the formatting and have better nav)  
-- Raw Page (Don't know how it actually feels to access)  
+- Welcome Page needs to explain the concept of what Rough Drafts is and look more presentable
+- List of Articles (Needs link to User Settings, search functions, and filtering. Like tags & published status.)
+- New User Page (Should explain the formatting and have better nav)
+- Raw Page (Don't know how it actually feels to access)
 
+### Done ✓
+
+- Article Settings (Needs to handle published mode, title, summary, and imply rbac stuff. Also needs ability to delete article. Might need ability to transfer article ownership?)
+- Swap to Server JS
+- Organize functions and files
+- See if theres a view thats just template literals
+- Find a testing suite (Jest?)
+- Prepare functions for unit testing
+- Edit Page (Needs to know if the user is logged in or not)
+- User Settings (Needs to handle changing display name and vanity settings and allow downloading notes)
+- BUG Editing need hidden for title or something.
+- Add update and error reporting to settings pages

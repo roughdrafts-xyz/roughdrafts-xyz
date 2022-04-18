@@ -12,7 +12,10 @@ const getSettings = async ctx => {
   if (id !== post.authorId) {
     return null
   } else {
-    return render('articleSettings', post)
+    return render('articleSettings', {
+      ...post,
+      updateStatus: ''
+    })
   }
 }
 
@@ -21,20 +24,40 @@ const updateSettings = async ctx => {
   if (!id) return null
 
   const { title, summary, displayId, visibility } = ctx.body
-  const post = await prisma.article.update({
-    where: { displayId: ctx.params.displayId },
-    data: {
-      title,
-      summary,
-      displayId,
-      visibility
-    }
+  const post = await prisma.article.findUnique({
+    where: { displayId }
   })
 
   if (id !== post.authorId) {
     return null
-  } else {
-    return render('articleSettings', post)
+  }
+
+  try {
+    const post = await prisma.article.update({
+      where: { displayId: ctx.params.displayId },
+      data: {
+        title,
+        summary,
+        displayId,
+        visibility
+      }
+    })
+
+    return render('articleSettings', {
+      ...post,
+      updateStatus:
+        "<section role='status'>Settings saved succesfully.</section>"
+    })
+  } catch (e) {
+    console.error(e)
+    const user = await prisma.user.findUnique({
+      where: { id }
+    })
+    return render('userSettings', {
+      ...user,
+      updateStatus:
+        "<section role='alert'>An error occured. Please try again.</section>"
+    })
   }
 }
 module.exports = {
