@@ -8,23 +8,24 @@ Project Description
 
 ### Todo
 
+- Axe New User Page
 - Add styling to update and error reporting
 - Add plugins to markdown-it
 - Add Passport & Discord Oauth
-- Prep Procfile and ENV for Piku needs
 - Setup Prisma to actually use mysql instead
 - Setup visibility on articles to be an ENUM
+- Prep Procfile and ENV for Piku needs
 
 ### Views I don't like yet
 
 - Welcome Page needs to explain the concept of what Rough Drafts is and look more presentable
-- List of Articles (Needs link to User Settings, search functions, and filtering. Like tags & published status.)
-- New User Page (Should explain the formatting and have better nav)
-- Raw Page (Don't know how it actually feels to access)
 
 ### Won't do X
 
 - BUG > Title and Name can be blank because '' is a proper string. Normalize data with a middleware? (required field is good enough)
+- List of Articles (Needs link to User Settings, search functions, and filtering. Like tags & published status.) - (Most of this is done, everything else is just v2)
+- Raw Page (Don't know how it actually feels to access) - (This is essentially a kind error page, it can be improved in v2)
+- New User Page (Should explain the formatting and have better nav) - (This is getting axed)
 
 ### Done ✓
 
