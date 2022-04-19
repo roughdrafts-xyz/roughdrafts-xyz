@@ -50,13 +50,22 @@ const updateSettings = async ctx => {
     })
   } catch (e) {
     console.error(e)
-    const user = await prisma.user.findUnique({
-      where: { id }
+
+    let updateStatus = ''
+    if (e.meta.target.includes('displayId')) {
+      updateStatus = /* html */ `<section role='alert'>The URL Endpoint "${displayId}" has already been taken.</section>`
+    } else {
+      updateStatus =
+        "<section role='alert'>An unhandled error occured..</section>"
+    }
+
+    const post = await prisma.article.findUnique({
+      where: { displayId: ctx.params.displayId }
     })
-    return render('userSettings', {
-      ...user,
-      updateStatus:
-        "<section role='alert'>An error occured. Please try again.</section>"
+
+    return render('articleSettings', {
+      ...post,
+      updateStatus
     })
   }
 }

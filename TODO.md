@@ -8,13 +8,12 @@ Project Description
 
 ### Todo
 
+- Add styling to update and error reporting
 - Add plugins to markdown-it
 - Add Passport & Discord Oauth
-- Add input verification to settings pages
 - Prep Procfile and ENV for Piku needs
 - Setup Prisma to actually use mysql instead
-- BUG > Title and Name can be blank because '' is a proper string. Normalize data with a middleware?
-- Add styling to update and error reporting
+- Setup visibility on articles to be an ENUM
 
 ### Views I don't like yet
 
@@ -22,6 +21,10 @@ Project Description
 - List of Articles (Needs link to User Settings, search functions, and filtering. Like tags & published status.)
 - New User Page (Should explain the formatting and have better nav)
 - Raw Page (Don't know how it actually feels to access)
+
+### Won't do X
+
+- BUG > Title and Name can be blank because '' is a proper string. Normalize data with a middleware? (required field is good enough)
 
 ### Done ✓
 
@@ -35,3 +38,5 @@ Project Description
 - User Settings (Needs to handle changing display name and vanity settings and allow downloading notes)
 - BUG Editing need hidden for title or something.
 - Add update and error reporting to settings pages
+- Add input verification to settings pages
+- Add update errors to setting updates
