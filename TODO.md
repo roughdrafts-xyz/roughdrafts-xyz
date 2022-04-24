@@ -8,9 +8,6 @@ Project Description
 
 ### Todo
 
-- Axe New User Page
-- Add styling to update and error reporting
-- Add plugins to markdown-it
 - Add Passport & Discord Oauth
 - Setup Prisma to actually use mysql instead
 - Setup visibility on articles to be an ENUM
@@ -22,6 +19,7 @@ Project Description
 
 ### Won't do X
 
+- Add styling to update and error reporting
 - BUG > Title and Name can be blank because '' is a proper string. Normalize data with a middleware? (required field is good enough)
 - List of Articles (Needs link to User Settings, search functions, and filtering. Like tags & published status.) - (Most of this is done, everything else is just v2)
 - Raw Page (Don't know how it actually feels to access) - (This is essentially a kind error page, it can be improved in v2)
@@ -41,3 +39,5 @@ Project Description
 - Add update and error reporting to settings pages
 - Add input verification to settings pages
 - Add update errors to setting updates
+- Axe New User Page
+- Add plugins to markdown-it

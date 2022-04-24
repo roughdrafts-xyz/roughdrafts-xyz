@@ -1,6 +1,14 @@
 const { render, redirect } = require('server/reply')
 const prisma = require('../../prisma')
+const anchor = require('markdown-it-anchor')
 const md = require('markdown-it')()
+  .use(anchor, {
+    permalink: anchor.permalink.headerLink()
+  })
+  .use(require('markdown-it-emoji'))
+  .use(require('markdown-it-toc-done-right'))
+  .use(require('markdown-it-highlightjs'))
+  .use(require('markdown-it-external-links'))
 
 const shouldDisplay = (ctx, post) => {
   if (!post) return true

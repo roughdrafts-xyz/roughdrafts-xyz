@@ -20,7 +20,6 @@ const loginCallback = async ctx => {
   const discordId = '1235'
   const discordName = 'Sum Guy'
   let user = await prisma.user.findUnique({ where: { discordId } })
-  let isNew = false
   if (!user) {
     user = await prisma.user.create({
       data: {
@@ -29,13 +28,10 @@ const loginCallback = async ctx => {
         name: discordName
       }
     })
-    isNew = true
   }
   // ah shit we need cookies or something
   ctx.session.user = user
-  if (isNew) {
-    return redirect(303, '/welcome')
-  } else if (ctx.query.redirect) {
+  if (ctx.query.redirect) {
     return redirect(303, ctx.query.redirect)
   } else {
     return redirect(303, `/@${user.displayId}`)
