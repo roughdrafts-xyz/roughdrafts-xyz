@@ -9,6 +9,9 @@ Project Description
 ### Todo
 
 - Add Passport & Discord Oauth
+  <!-- https://github.com/frenchbread/server.js-auth-example/blob/master/server.js -->
+  <!-- https://www.passportjs.org/concepts/authentication/logout/ -->
+  <!-- https://hackernoon.com/passportjs-the-confusing-parts-explained-edca874ebead -->
 - Setup Prisma to actually use mysql instead
 - Setup visibility on articles to be an ENUM
 - Prep Procfile and ENV for Piku needs

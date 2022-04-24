@@ -7,10 +7,28 @@
 const server = require('server')
 const { get, error } = server.router
 const { status, render, redirect } = server.reply
+const { modern } = server.utils
+
 const es6Renderer = require('express-es6-template-engine')
 const routes = require('auto-load')('routes')
+const passport = require('passport')
+const prisma = require('./prisma')
 
 // need to make a Procfile that handles making the secret key and prisma shit
+
+// https://github.com/jaredhanson/passport#sessions
+passport.serializeUser(async function (user, done) {
+  done(null, user.id)
+})
+
+passport.deserializeUser(async function (id, done) {
+  const user = await prisma.user.findUnique({
+    where: {
+      id
+    }
+  })
+  done(null, user)
+})
 
 // Run the server!
 module.exports = server(
@@ -36,6 +54,7 @@ module.exports = server(
         )
     }
   },
+  modern(passport.initialize()),
   [
     get('/', async ctx => {
       if (ctx.session.user) {
