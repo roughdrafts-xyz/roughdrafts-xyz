@@ -6,6 +6,9 @@ const axios = require('axios')
 const loginCallback = async ctx => {
   const discordToken = ctx.session.grant.response.access_token
   const discordAPI = 'https://discord.com/api/users/@me'
+  if (!discordToken) {
+    return redirect(500, '/error')
+  }
   const { data: discordResults } = await axios.get(discordAPI, {
     headers: { Authorization: `Bearer ${discordToken}` }
   })

@@ -62,6 +62,7 @@ module.exports = server(
         return render('login')
       }
     }),
+    get('/error', async ctx => render('error')),
     get('/welcome', async ctx => render('registered'))
   ],
   ...routes.login,
