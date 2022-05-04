@@ -17,8 +17,9 @@
   "dependencies": {
     "@prisma/client": "^3.9.2",
     "auto-load": "^3.0.4",
+    "axios": "^0.27.2",
     "express-es6-template-engine": "^2.2.3",
-    "fastify-cookie": "^5.5.0",
+    "grant": "^5.4.21",
     "jszip": "^3.8.0",
     "markdown-it": "^12.3.2",
     "markdown-it-anchor": "^8.6.2",
@@ -27,15 +28,13 @@
     "markdown-it-highlightjs": "^4.0.1",
     "markdown-it-toc-done-right": "^4.2.0",
     "nanoid": "^3.3.1",
-    "passport": "^0.5.2",
-    "passport-oauth2": "^1.6.1",
     "prisma": "^3.9.2",
-    "server": "^1.0.37",
-    "supertest": "^6.2.2",
-    "supertest-session": "^4.1.0"
+    "server": "^1.0.37"
   },
   "devDependencies": {
     "jest": "^27.5.1",
-    "standard": "^16.0.4"
+    "standard": "^16.0.4",
+    "supertest": "^6.2.2",
+    "supertest-session": "^4.1.0"
   }
 }

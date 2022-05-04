@@ -1,8 +1,4 @@
 const { get } = require('server/router')
-const { login, loginCallback, logout } = require('../handlers/login')
+const { loginCallback, logout } = require('../handlers/login')
 
-module.exports = [
-  get('/login', login),
-  get('/login/callback', loginCallback),
-  get('/logout', logout)
-]
+module.exports = [get('/login/callback', loginCallback), get('/logout', logout)]

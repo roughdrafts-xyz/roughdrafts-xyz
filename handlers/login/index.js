@@ -1,24 +1,16 @@
 const { redirect } = require('server/reply')
 const prisma = require('../../prisma')
 const nanoid = require('../../nanoid')
-
-const login = async ctx => {
-  // oauth2 bullshit
-  // oauth does this redirect normally
-  if (ctx.session.user) {
-    return redirect(303, `/@${ctx.session.user.displayId}`)
-  } else {
-    return redirect(303, '/login/callback')
-  }
-}
+const axios = require('axios')
 
 const loginCallback = async ctx => {
-  // this should be a post normally
-  // https://github.com/jaredhanson/passport-oauth2 This supports scope, its just not a documented option
-
-  // idk discord is probably going to want this tho
-  const discordId = '1235'
-  const discordName = 'Sum Guy'
+  const discordToken = ctx.session.grant.response.access_token
+  const discordAPI = 'https://discord.com/api/users/@me'
+  const { data: discordResults } = await axios.get(discordAPI, {
+    headers: { Authorization: `Bearer ${discordToken}` }
+  })
+  const discordId = discordResults.id
+  const discordName = discordResults.username
   let user = await prisma.user.findUnique({ where: { discordId } })
   if (!user) {
     user = await prisma.user.create({
@@ -29,8 +21,10 @@ const loginCallback = async ctx => {
       }
     })
   }
-  // ah shit we need cookies or something
+
   ctx.session.user = user
+  delete ctx.session.grant
+
   if (ctx.query.redirect) {
     return redirect(303, ctx.query.redirect)
   } else {
@@ -45,7 +39,6 @@ const logout = async ctx => {
   return redirect(303, '/')
 }
 module.exports = {
-  login,
   loginCallback,
   logout
 }
