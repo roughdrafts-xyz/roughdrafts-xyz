@@ -1,2 +1,2 @@
-web: node server.js 2>&1 | cat
+web: node server.js
 release: npm run deploy
