@@ -25,7 +25,7 @@ const updateSettings = async ctx => {
 
   const { title, summary, displayId, visibility } = ctx.body
   const post = await prisma.article.findUnique({
-    where: { displayId }
+    where: { displayId: ctx.params.displayId }
   })
 
   if (id !== post.authorId) {
