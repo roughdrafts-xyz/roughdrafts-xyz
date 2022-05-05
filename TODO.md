@@ -8,8 +8,6 @@ Project Description
 
 ### Todo
 
-- Setup Prisma to actually use mysql instead
-- Setup visibility on articles to be an ENUM
 - Prep Procfile and ENV for Piku needs
 
 ### Views I don't like yet
@@ -21,6 +19,7 @@ Project Description
 - List of Articles (Needs link to User Settings, search functions, and filtering. Like tags & published status.) - (Most of this is done, everything else is just v2)
 - Raw Page (Don't know how it actually feels to access) - (This is essentially a kind error page, it can be improved in v2)
 - New User Page (Should explain the formatting and have better nav) - (This is getting axed)
+- Setup visibility on articles to be an ENUM (ENUMs are a lot more limited than expected, just added a shim)
 
 ### Done ✓
 
@@ -40,3 +39,4 @@ Project Description
 - Add plugins to markdown-it
 - Add Discord Oauth via Grant
 - Welcome Page needs to explain the concept of what Rough Drafts is and look more presentable
+- Setup Prisma to actually use mysql instead
