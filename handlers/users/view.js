@@ -53,9 +53,9 @@ const viewUser = async ctx => {
 
 const downloadArticles = async ctx => {
   const { id } = ctx.session.user
-  if (!id) return null
+  if (!id) throw new Error('Illegal Action')
   const posts = await prisma.article.findMany({ where: { authorId: id } })
-  if (!posts) return null
+  if (!posts) throw new Error('Illegal Action')
   const zip = new JSZip()
   const markdown = zip.folder('markdown')
   const html = zip.folder('html')

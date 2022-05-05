@@ -37,7 +37,7 @@ const getRaw = async ctx => {
     where: { displayId: ctx.params.displayId }
   })
 
-  if (!shouldDisplay(ctx, post)) return null
+  if (!shouldDisplay(ctx, post)) throw new Error('Illegal Action')
   return render('viewRaw', post)
 }
 
@@ -46,7 +46,7 @@ const getEmptyEditor = async ctx => {
     where: { displayId: ctx.params.displayId }
   })
 
-  if (!shouldDisplay(ctx, post)) return null
+  if (!shouldDisplay(ctx, post)) throw new Error('Illegal Action')
   if (!post) {
     return render('new', {
       displayId: ctx.params.displayId,
@@ -68,7 +68,7 @@ const getEditor = async ctx => {
     return redirect(`${ctx.params.displayId}/new`)
   }
 
-  if (!shouldModify(ctx, post)) return null
+  if (!shouldModify(ctx, post)) throw new Error('Illegal Action')
 
   if (id !== post.authorId) {
     return redirect(`/${ctx.params.fileId}/raw`)
@@ -80,13 +80,13 @@ const getEditor = async ctx => {
 
 const updateArticle = async ctx => {
   const { id } = ctx.session.user
-  if (!id) return null
+  if (!id) throw new Error('Illegal Action')
 
   const post = await prisma.article.findUnique({
     where: { displayId: ctx.params.displayId }
   })
 
-  if (!shouldModify(ctx, post)) return null
+  if (!shouldModify(ctx, post)) throw new Error('Illegal Action')
   // just write the new file to the database
   // do category and spam detection using https://simplestatistics.org/docs/#bayesianclassifier
   // break stuff into 4 sets of words, then use BayesianClassifier to get estimates
@@ -124,14 +124,14 @@ const updateArticle = async ctx => {
 
 const deleteArticle = async ctx => {
   const { id } = ctx.session.user
-  if (!id) return null
+  if (!id) throw new Error('Illegal Action')
 
   const post = await prisma.article.findUnique({
     where: { displayId: ctx.params.displayId }
   })
 
-  if (!shouldModify(ctx, post)) return null
-  if (ctx.body.deleteMe !== post.displayId) return null
+  if (!shouldModify(ctx, post)) throw new Error('Illegal Action')
+  if (ctx.body.deleteMe !== post.displayId) throw new Error('Illegal Action')
   await prisma.article.delete({ where: { displayId: ctx.params.displayId } })
   return redirect('/')
 }

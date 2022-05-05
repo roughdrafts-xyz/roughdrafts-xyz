@@ -3,14 +3,14 @@ const prisma = require('../../prisma')
 
 const getSettings = async ctx => {
   const { id } = ctx.session.user
-  if (!id) return null
+  if (!id) throw new Error('Illegal Action')
 
   const post = await prisma.article.findUnique({
     where: { displayId: ctx.params.displayId }
   })
 
   if (id !== post.authorId) {
-    return null
+    throw new Error('Illegal Action')
   } else {
     return render('articleSettings', {
       ...post,
@@ -21,16 +21,22 @@ const getSettings = async ctx => {
 
 const updateSettings = async ctx => {
   const { id } = ctx.session.user
-  if (!id) return null
+  if (!id) throw new Error('Illegal Action')
 
-  const { title, summary, displayId, visibility } = ctx.body
+  const { title, summary, displayId, visibility: rawVisibility } = ctx.body
   const post = await prisma.article.findUnique({
     where: { displayId: ctx.params.displayId }
   })
 
   if (id !== post.authorId) {
-    return null
+    throw new Error('Illegal Action')
   }
+
+  const visibility = ['public', 'unlisted', 'private'].includes(
+    rawVisibility.toLowerCase()
+  )
+    ? rawVisibility.toLowerCase()
+    : 'unlisted'
 
   try {
     const post = await prisma.article.update({

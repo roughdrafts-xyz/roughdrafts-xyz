@@ -11,7 +11,7 @@ const viewFile = async ctx => {
   const isUser = ctx.session?.user?.id === post.authorId
 
   if (!isUser) {
-    if (post.visibility === 'private') return null
+    if (post.visibility === 'private') throw new Error('Illegal Action')
   }
 
   return render('view', {

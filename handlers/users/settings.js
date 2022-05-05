@@ -11,11 +11,11 @@ const shouldModify = (ctx, user) => {
 
 const viewSettings = async ctx => {
   const { id } = ctx.session.user
-  if (!id) return null
+  if (!id) throw new Error('Illegal Action')
   const user = await prisma.user.findUnique({
     where: { id }
   })
-  if (!user) return null
+  if (!user) throw new Error('Illegal Action')
   // Expose download link to personal sqlite db
   return render('userSettings', {
     ...user,
@@ -25,7 +25,7 @@ const viewSettings = async ctx => {
 
 const updateSettings = async ctx => {
   const { id } = ctx.session.user
-  if (!id) return null
+  if (!id) throw new Error('Illegal Action')
   const { displayId, name, summary } = ctx.body
   try {
     const user = await prisma.user.update({
@@ -61,14 +61,14 @@ const updateSettings = async ctx => {
 
 const deleteUser = async ctx => {
   const { id } = ctx.session.user
-  if (!id) return null
+  if (!id) throw new Error('Illegal Action')
 
   const user = await prisma.user.findUnique({
     where: { id }
   })
 
-  if (!shouldModify(ctx, user)) return null
-  if (ctx.body.deleteMe !== user.displayId) return null
+  if (!shouldModify(ctx, user)) throw new Error('Illegal Action')
+  if (ctx.body.deleteMe !== user.displayId) throw new Error('Illegal Action')
   const deletePosts = prisma.article.deleteMany({ where: { authorId: id } })
   const deleteUser = prisma.user.delete({ where: { id } })
   await prisma.$transaction([deletePosts, deleteUser])

@@ -6,7 +6,7 @@
 
 const server = require('server')
 const { get, error } = server.router
-const { status, render, redirect } = server.reply
+const { render, redirect } = server.reply
 const { modern } = server.utils
 
 const es6Renderer = require('express-es6-template-engine')
@@ -62,7 +62,6 @@ module.exports = server(
         return render('login')
       }
     }),
-    get('/error', async ctx => render('error')),
     get('/welcome', async ctx => render('registered'))
   ],
   ...routes.login,
@@ -70,6 +69,6 @@ module.exports = server(
   ...routes.articles,
   error(ctx => {
     console.error(ctx.error.message)
-    return status(500).send(`<pre>${ctx.error.message}</pre>`)
+    return render('error')
   })
 )
