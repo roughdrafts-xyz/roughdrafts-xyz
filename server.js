@@ -22,10 +22,10 @@ module.exports = server(
     views: 'views',
     favicon: './favicon.png',
     session: {
-      secret: 'This is a super very long secret password',
+      secret: process.env.RD_SECRET,
       saveUninitialized: false,
       unset: 'destroy',
-      cookie: { secure: false }
+      cookie: { secure: true }
     },
     engine: {
       html: (file, options, cb) =>
@@ -37,6 +37,12 @@ module.exports = server(
           },
           cb
         )
+    },
+    log: {
+      level: 'info',
+      report: (content, type) => {
+        console.log(content)
+      }
     }
   },
   modern(
