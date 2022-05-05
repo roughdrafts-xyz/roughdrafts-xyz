@@ -14,8 +14,6 @@ Project Description
 
 ### Views I don't like yet
 
-- Welcome Page needs to explain the concept of what Rough Drafts is and look more presentable
-
 ### Won't do X
 
 - Add styling to update and error reporting
@@ -41,3 +39,4 @@ Project Description
 - Axe New User Page
 - Add plugins to markdown-it
 - Add Discord Oauth via Grant
+- Welcome Page needs to explain the concept of what Rough Drafts is and look more presentable
