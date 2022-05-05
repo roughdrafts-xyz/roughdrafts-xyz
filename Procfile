@@ -1,2 +1,2 @@
-web: PORT=$PORT node server.js
+web: node ./server.js
 release: npm run deploy
