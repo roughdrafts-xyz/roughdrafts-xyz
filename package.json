@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "PORT=3000 node -r dotenv/config .",
-    "test": "jest"
+    "test": "jest",
+    "deploy": "prisma migrate deploy"
   },
   "standard": {
     "env": [
