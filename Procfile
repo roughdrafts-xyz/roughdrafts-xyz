@@ -1,2 +1,1 @@
-web: echo "Running on $PORT"
-release: npm run deploy
+web: npm run deploy
