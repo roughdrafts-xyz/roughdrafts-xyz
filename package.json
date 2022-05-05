@@ -2,11 +2,11 @@
   "name": "roughdrafts-git-version",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "dev": "PORT=3000 node -r dotenv/config .",
     "test": "jest",
-    "deploy": "prisma migrate deploy && npm install --package-lock=false --prefix $(echo $NODE_PATH)/.. @prisma/client && node server.js"
+    "deploy": "prisma migrate deploy && npm install --package-lock=false --prefix $(echo $NODE_PATH)/.. @prisma/client && node ."
   },
   "standard": {
     "env": [
