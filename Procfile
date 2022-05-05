@@ -1,1 +1,1 @@
-idfk: npm run deploy
+web: npm run deploy
