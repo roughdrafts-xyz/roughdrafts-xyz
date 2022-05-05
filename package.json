@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "PORT=3000 node -r dotenv/config .",
     "test": "jest",
-    "deploy": "prisma migrate deploy && npm install @prisma/client"
+    "deploy": "prisma migrate deploy && npm install --prefix $(echo $NODE_PATH)/.. @prisma/client"
   },
   "standard": {
     "env": [
