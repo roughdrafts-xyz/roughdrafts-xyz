@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "PORT=3000 node -r dotenv/config .",
     "test": "jest",
-    "deployMigrations": "prisma migrate deploy",
+    "predeploy": "prisma migrate deploy && npm run updatePrismaClient",
     "updatePrismaClient": "npm install --package-lock=false --prefix $(echo $NODE_PATH)/.. @prisma/client",
     "deploy": "node ."
   },
