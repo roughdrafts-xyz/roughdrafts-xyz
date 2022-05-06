@@ -77,4 +77,4 @@ module.exports = server(
     console.error(ctx.error.message)
     return render('error')
   })
-).set('trust proxy', 1)
+)
