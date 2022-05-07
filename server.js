@@ -26,8 +26,7 @@ module.exports = server(
       saveUninitialized: false,
       unset: 'destroy',
       cookie: {
-        secure:
-          process.env.NODE_ENV === 'prod' || process.env.NODE_ENV === 'staging'
+        secure: process.env.NODE_ENV === 'production'
       }
     },
     engine: {
