@@ -25,7 +25,10 @@ module.exports = server(
       secret: process.env.RD_SECRET,
       saveUninitialized: false,
       unset: 'destroy',
-      cookie: { secure: true }
+      cookie: {
+        secure:
+          process.env.NODE_ENV === 'prod' || process.env.NODE_ENV === 'staging'
+      }
     },
     engine: {
       html: (file, options, cb) =>

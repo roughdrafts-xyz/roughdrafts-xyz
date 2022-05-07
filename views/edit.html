@@ -6,9 +6,14 @@
   <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css" />
   <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
   <style>
-    form {
+    form,
+    fieldset {
       display: flex;
       flex-direction: column;
+    }
+
+    .visibilityLabel {
+      text-transform: capitalize;
     }
 
     header {
@@ -19,6 +24,30 @@
     .editor-toolbar button {
       color: initial;
     }
+
+    .editor-toolbar {
+      background-color: #bbb;
+    }
+
+    input:not([type='radio']) {
+      width: 100%;
+    }
+
+    .deleteArticle {
+      padding-top: 1.5em;
+      margin-top: 1.5em;
+      border-top: 0.25ch dashed black;
+    }
+
+    @media(prefers-color-scheme: dark) {
+      .deleteArticle {
+        border-top: 0.25ch dashed white;
+      }
+    }
+
+    .saveButton {
+      width: 100%;
+    }
   </style>
 </head>
 
@@ -26,17 +55,56 @@
   <header>
     <h2>Editing ${title}</h2>
     <nav>
-      <a href="/${displayId}/settings">Settings</a>
-      <a href="/${displayId}">Cancel</a>
+      ${isNew
+      ? `<a href="/">Cancel</a>`
+      : `<a href="/${displayId}">Cancel</a>`
+      }
     </nav>
   </header>
   <main>
+    ${errorMessage}
     <form action="/${displayId}/edit" method="post">
+      <label>Title <small>(Required)</small><input type="text" name="title" value="${title}" required /></label>
+      <label>Summary <small>(Leave Blank for Automatic Summary)</small> <input name="summary" type="text"
+          value="${summary}" /></label>
+      <label>Article</label>
       <textarea name="article">${rawContent}</textarea>
-      <button>Save</button>
-      <input type="hidden" name="title" value="${title}" />
-      <input type="hidden" name="_csrf" value="${csrf}" />
+      <button class="saveButton">Save</button>
+      <details>
+        ${isNew
+        ? `<summary>Advanced Settings (URL Endpoint, Visibility)</summary>`
+        : `<summary>Advanced Settings (URL Endpoint, Visibility, Deletion)</summary>`
+        }
+        <label>URL Endpoint
+          <small>(Required, Must be Unique, No Spaces, Alphanumeric characters Only)</small>
+          <input type="text" name="displayId" value="${displayId}" required />
+        </label>
+        <fieldset>
+          <legend>Visibility</legend>
+          ${['private', 'unlisted', 'public'].map((curr)=>/*html*/`<label class="visibilityLabel">
+            <input type="radio" name="visibility" value="${curr}" ${visibility===curr ?'checked':''} />
+            ${curr}
+          </label>`).join('\n')}
+        </fieldset>
+        <button class="saveButton">Save</button>
+        <input type="hidden" name="_csrf" value="${csrf}" />
     </form>
+    ${isNew ? '' :
+    `<form action="/${displayId}/delete" method="post" class="deleteArticle">
+      <fieldset>
+        <legend>
+          Delete Article
+        </legend>
+        <label>
+          Please Enter ${displayId} to Confirm
+          <input type="text" name="deleteMe" />
+        </label>
+      </fieldset>
+      <button>Delete</button>
+      <input type="hidden" name="_csrf" value="${csrf}" />
+    </form>`
+    }
+    </details>
   </main>
 </body>
 <script>
@@ -44,7 +112,7 @@
     autofocus: true,
     autosave: {
       enabled: true,
-      uniqueId: '${id}',
+      uniqueId: '${displayId}',
       text: 'Last saved locally at '
     }
   })
