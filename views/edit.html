@@ -25,9 +25,10 @@
       color: initial;
     }
 
-    .editor-toolbar {
-      background-color: #bbb;
+    .editor-toolbar button:hover {
+      color: initial;
     }
+
 
     input:not([type='radio']) {
       width: 100%;
@@ -43,10 +44,21 @@
       .deleteArticle {
         border-top: 0.25ch dashed white;
       }
+
+      .editor-toolbar {
+        background-color: #bbb;
+      }
     }
 
     .saveButton {
       width: 100%;
+    }
+
+    [role=alert] {
+      background-color: #A5243D;
+      padding: 0.5em;
+      border-radius: 4px;
+      font-weight: bold;
     }
   </style>
 </head>
