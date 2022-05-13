@@ -49,10 +49,10 @@
   </header>
   ${updateStatus}
   <form action="/settings" method="post">
-    <label>Display Name (Required)<input type="text" name="name" value="${name}" required /></label>
-    <label>Summary (Leave blank for none)<input type="text" name="summary" value="${summary}" /></label>
+    <label>Display Name (Required)<input type="text" name="name" value="${name}" required maxlength="280" /></label>
+    <label>Summary (Leave blank for none)<input type="text" name="summary" value="${summary}" maxlength="280" /></label>
     <label>URL Endpoint (Required, Must be Unique No Spaces, Alphanumeric characters Only)<input type="text"
-        name="displayId" value="${displayId}" required /></label>
+        name="displayId" value="${displayId}" required maxlength="191" /></label>
     <button>Save</button>
     <input type="hidden" name="_csrf" value="${csrf}" />
   </form>

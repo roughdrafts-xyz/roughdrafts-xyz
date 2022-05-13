@@ -76,11 +76,12 @@
   <main>
     ${errorMessage}
     <form action="/${displayId}/edit" method="post">
-      <label>Title <small>(Required)</small><input type="text" name="title" value="${title}" required /></label>
+      <label>Title <small>(Required)</small><input type="text" name="title" value="${title}" maxlength="280"
+          required /></label>
       <label>Summary <small>(Leave Blank for Automatic Summary)</small> <input name="summary" type="text"
-          value="${summary}" /></label>
+          value="${summary}" maxlength="280" /></label>
       <label>Article</label>
-      <textarea name="article">${rawContent}</textarea>
+      <textarea name="article" maxlength="16000000">${rawContent}</textarea>
       <button class="saveButton">Save</button>
       <details>
         ${isNew
@@ -89,7 +90,7 @@
         }
         <label>URL Endpoint
           <small>(Required, Must be Unique, No Spaces, Alphanumeric characters Only)</small>
-          <input type="text" name="displayId" value="${displayId}" required />
+          <input type="text" name="displayId" value="${displayId}" maxlength="191" required />
         </label>
         <fieldset>
           <legend>Visibility</legend>

@@ -12,8 +12,8 @@ model Article {
   displayId String? @unique // For urls and allowing vanity urls
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  title String
-  summary String @default("")
+  title String @db.VarChar(280)
+  summary String @db.VarChar(280) @default("")
   content String @db.MediumText
   rawContent String @db.MediumText
   visibility String @default("unlisted")
@@ -25,7 +25,7 @@ model User {
   id String @id @default(uuid())
   discordId String? @unique
   displayId String? @unique // For urls and allowing vanity urls
-  name String @default("Anonymous")
-  summary String @default("This user has not set a summary.")
+  name String @db.VarChar(280) @default("Anonymous")
+  summary String @db.VarChar(280) @default("This user has not set a summary.")
   articles Article[]
 }
