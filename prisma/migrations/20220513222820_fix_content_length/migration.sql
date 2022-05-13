@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `Article` MODIFY `content` MEDIUMTEXT NOT NULL,
+    MODIFY `rawContent` MEDIUMTEXT NOT NULL;

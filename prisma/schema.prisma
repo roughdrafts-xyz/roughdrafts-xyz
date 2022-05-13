@@ -14,8 +14,8 @@ model Article {
   updatedAt DateTime @updatedAt
   title String
   summary String @default("")
-  content String
-  rawContent String
+  content String @db.MediumText
+  rawContent String @db.MediumText
   visibility String @default("unlisted")
   author User @relation(fields: [authorId], references: [id])
   authorId String
