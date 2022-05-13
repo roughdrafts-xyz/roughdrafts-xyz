@@ -9,6 +9,11 @@
             justify-content: space-between;
         }
     </style>
+    <meta property="og:title" content="${title}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="${summary ? summary : rawContent.slice(0,280)}" />
+    <meta property="og:url" content="${ogUrl}" />
+    <meta property="og:site_name" content="Rough Drafts" />
 </head>
 
 <body>

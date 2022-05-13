@@ -16,7 +16,8 @@ const viewFile = async ctx => {
 
   return render('view', {
     ...post,
-    isUser
+    isUser,
+    ogUrl: `${process.env.GRANT_ORIGIN}${ctx.url}`
   })
   // do I need a dynamic get for header nonsense?
   // yup. This can probably still just be fast. Concat the header and the premade content or something.
