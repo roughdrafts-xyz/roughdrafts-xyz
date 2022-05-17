@@ -13,8 +13,6 @@ const es6Renderer = require('express-es6-template-engine')
 const routes = require('auto-load')('routes')
 const grant = require('grant').express()
 
-// need to make a Procfile that handles making the secret key and prisma shit
-
 // Run the server!
 module.exports = server(
   {
@@ -26,7 +24,8 @@ module.exports = server(
       saveUninitialized: false,
       unset: 'destroy',
       cookie: {
-        secure: process.env.NODE_ENV === 'production'
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 8294400000 // 96 Days, Arbitrarily chosen
       }
     },
     engine: {
