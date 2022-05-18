@@ -3,12 +3,17 @@ const prisma = require('../../prisma')
 
 const viewFile = async ctx => {
   const post = await prisma.article.findUnique({
-    where: { displayId: ctx.params.displayId },
+    where: {
+      slugId: {
+        authorDisplayId: ctx.params.authorDisplayId,
+        displayId: ctx.params.displayId
+      }
+    },
     include: {
       author: true
     }
   })
-  const isUser = ctx.session?.user?.id === post.authorId
+  const isUser = ctx.session?.user?.id === post.author.id
 
   if (!isUser) {
     if (post.visibility === 'private') throw new Error('Illegal Action')

@@ -13,7 +13,7 @@ const md = require('markdown-it')()
 const shouldDisplay = (ctx, post) => {
   if (!post) return true
 
-  const isUser = ctx.session?.user?.id === post.authorId
+  const isUser = ctx.session?.user?.displayId === post.authorDisplayId
 
   if (!isUser) {
     if (post.visibility === 'private') return false
@@ -26,7 +26,7 @@ const shouldDisplay = (ctx, post) => {
 const shouldModify = (ctx, post) => {
   if (!post) return true
 
-  const isUser = ctx.session?.user?.id === post.authorId
+  const isUser = ctx.session?.user?.displayId === post.authorDisplayId
 
   if (isUser) return true
   return false
@@ -34,12 +34,18 @@ const shouldModify = (ctx, post) => {
 
 const getEmptyEditor = async ctx => {
   const post = await prisma.article.findUnique({
-    where: { displayId: ctx.params.displayId }
+    where: {
+      slugId: {
+        authorDisplayId: ctx.params.authorDisplayId,
+        displayId: ctx.params.displayId
+      }
+    }
   })
 
   if (!shouldDisplay(ctx, post)) throw new Error('Illegal Action')
   if (!post) {
     return render('edit', {
+      authorDisplayId: ctx.params.authorDisplayId,
       displayId: ctx.params.displayId,
       title: 'New Article',
       rawContent: '',
@@ -49,79 +55,44 @@ const getEmptyEditor = async ctx => {
       isNew: true
     })
   } else {
-    return redirect(`/${ctx.params.displayId}/edit`)
+    return redirect(
+      `/@${ctx.params.authorDisplayId}/${ctx.params.displayId}/edit`
+    )
   }
 }
 const getEditor = async ctx => {
-  const { id } = ctx.session.user
-
   const post = await prisma.article.findUnique({
-    where: { displayId: ctx.params.displayId }
+    where: {
+      slugId: {
+        authorDisplayId: ctx.params.authorDisplayId,
+        displayId: ctx.params.displayId
+      }
+    }
   })
 
   if (!post) {
-    return redirect(`${ctx.params.displayId}/new`)
+    return redirect(
+      `/@${ctx.params.authorDisplayId}/${ctx.params.displayId}/new`
+    )
   }
 
   if (!shouldModify(ctx, post)) throw new Error('Illegal Action')
-
-  if (id !== post.authorId) {
-    throw new Error('Illegal Action')
-  } else {
-    // cache will be able to handle anything important here
-    return render('edit', {
-      ...post,
-      errorMessage: '',
-      isNew: false
-    })
-  }
-}
-
-const updateSettings = async ctx => {
-  const { id } = ctx.session.user
-  if (!id) throw new Error('Illegal Action')
-
-  const { title, summary, displayId, visibility: rawVisibility } = ctx.body
-  const post = await prisma.article.findUnique({
-    where: { displayId: ctx.params.displayId }
+  // cache will be able to handle anything important here
+  return render('edit', {
+    ...post,
+    errorMessage: '',
+    isNew: false
   })
-
-  if (id !== post.authorId) {
-    throw new Error('Illegal Action')
-  }
-
-  const visibility = ['public', 'unlisted', 'private'].includes(
-    rawVisibility.toLowerCase()
-  )
-    ? rawVisibility.toLowerCase()
-    : 'unlisted'
-
-  try {
-    await prisma.article.update({
-      where: { displayId: ctx.params.displayId },
-      data: {
-        title,
-        summary,
-        displayId,
-        visibility
-      }
-    })
-  } catch (e) {
-    console.error(e)
-    if (e.meta.target.includes('displayId')) {
-      return /* html */ `<section role='alert'>The URL Endpoint "${displayId}" has already been taken.</section>`
-    } else {
-      return "<section role='alert'>An unhandled error occured.</section>"
-    }
-  }
 }
 
 const updateArticle = async ctx => {
-  const { id } = ctx.session.user
-  if (!id) throw new Error('Illegal Action')
-
   const post = await prisma.article.findUnique({
-    where: { displayId: ctx.params.displayId }
+    where: {
+      slugId: {
+        authorDisplayId: ctx.params.authorDisplayId,
+        displayId: ctx.params.displayId
+      }
+    }
   })
 
   if (!shouldModify(ctx, post)) throw new Error('Illegal Action')
@@ -133,47 +104,80 @@ const updateArticle = async ctx => {
   const rawContent = ctx.body.article
   const content = md.render(rawContent)
 
-  await prisma.article.upsert({
-    where: { displayId: ctx.params.displayId },
-    update: {
-      rawContent,
-      content
-    },
-    create: {
-      displayId: ctx.params.displayId,
-      title: ctx.body.title,
-      rawContent,
-      content,
-      summary: '',
-      author: {
-        connect: { id }
+  const { title, summary, displayId, visibility: rawVisibility } = ctx.body
+  const visibility = ['public', 'unlisted', 'private'].includes(
+    rawVisibility.toLowerCase()
+  )
+    ? rawVisibility.toLowerCase()
+    : 'unlisted'
+
+  const updateContent = {
+    displayId,
+    title,
+    rawContent,
+    content,
+    summary,
+    visibility
+  }
+
+  try {
+    await prisma.article.upsert({
+      where: {
+        slugId: {
+          authorDisplayId: ctx.params.authorDisplayId,
+          displayId: ctx.params.displayId
+        }
+      },
+      update: updateContent,
+      create: {
+        ...updateContent,
+        authorDisplayId: ctx.params.authorDisplayId
+      }
+    })
+  } catch (e) {
+    console.error(e)
+    let errorMessage
+    if (e.meta.target.includes('displayId')) {
+      errorMessage = /* html */ `<section role='alert'>The URL Endpoint "${displayId}" has already been taken.</section>`
+    } else {
+      errorMessage =
+        "<section role='alert'>An unhandled error occured.</section>"
+    }
+    if (errorMessage) {
+      const isNew = ctx.body.isNew === 'true'
+      return render('edit', {
+        ...updateContent,
+        authorDisplayId: ctx.params.authorDisplayId,
+        displayId: ctx.params.displayId,
+        errorMessage,
+        isNew
+      })
+    }
+  }
+
+  return redirect(`/@${ctx.params.authorDisplayId}/${ctx.body.displayId}`)
+}
+
+const deleteArticle = async ctx => {
+  const post = await prisma.article.findUnique({
+    where: {
+      slugId: {
+        authorDisplayId: ctx.params.authorDisplayId,
+        displayId: ctx.params.displayId
       }
     }
   })
 
-  const errorMessage = await updateSettings(ctx)
-  if (errorMessage) {
-    return render('edit', {
-      ...post,
-      errorMessage,
-      isNew: true
-    })
-  }
-
-  return redirect(`/${ctx.body.displayId}`)
-}
-
-const deleteArticle = async ctx => {
-  const { id } = ctx.session.user
-  if (!id) throw new Error('Illegal Action')
-
-  const post = await prisma.article.findUnique({
-    where: { displayId: ctx.params.displayId }
-  })
-
   if (!shouldModify(ctx, post)) throw new Error('Illegal Action')
   if (ctx.body.deleteMe !== post.displayId) throw new Error('Illegal Action')
-  await prisma.article.delete({ where: { displayId: ctx.params.displayId } })
+  await prisma.article.delete({
+    where: {
+      slugId: {
+        authorDisplayId: ctx.params.authorDisplayId,
+        displayId: ctx.params.displayId
+      }
+    }
+  })
   return redirect('/')
 }
 

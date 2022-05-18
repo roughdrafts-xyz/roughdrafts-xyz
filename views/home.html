@@ -83,11 +83,11 @@
   </header>
   <main>
     ${isUser ? /* html */ `<section>
-      <a href="/${newArticleId}/new" class="newArticleButton">Create New Article</a>
+      <a href="/@${displayId}/${newArticleId}/new" class="newArticleButton">Create New Article</a>
     </section>`:''}
     ${articles.map(
     curr => /* html */ `<section>
-      <h3><a href="/${curr.displayId}">${curr.title}</a></h3>
+      <h3><a href="/@${displayId}/${curr.displayId}">${curr.title}</a></h3>
       <span>${curr.summary ? curr.summary : curr.rawContent.slice(0,280)}</span>
     </section>`
     )

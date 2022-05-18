@@ -9,7 +9,7 @@ datasource db {
 
 model Article {
   id String @id @default(uuid())
-  displayId String? @unique // For urls and allowing vanity urls
+  displayId String // For urls and allowing vanity urls
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   title String @db.VarChar(280)
@@ -17,14 +17,16 @@ model Article {
   content String @db.MediumText
   rawContent String @db.MediumText
   visibility String @default("unlisted")
-  author User @relation(fields: [authorId], references: [id])
-  authorId String
+  author User @relation(fields: [authorDisplayId], references: [displayId])
+  authorDisplayId String
+
+  @@unique(fields: [authorDisplayId, displayId], name: "slugId")
 }
 
 model User {
   id String @id @default(uuid())
   discordId String? @unique
-  displayId String? @unique // For urls and allowing vanity urls
+  displayId String @unique // For urls and allowing vanity urls
   name String @db.VarChar(280) @default("Anonymous")
   summary String @db.VarChar(280) @default("This user has not set a summary.")
   articles Article[]

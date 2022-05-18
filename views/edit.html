@@ -69,13 +69,13 @@
     <nav>
       ${isNew
       ? `<a href="/">Cancel</a>`
-      : `<a href="/${displayId}">Cancel</a>`
+      : `<a href="/@${authorDisplayId}/${displayId}">Cancel</a>`
       }
     </nav>
   </header>
   <main>
     ${errorMessage}
-    <form action="/${displayId}/edit" method="post">
+    <form action="/@${authorDisplayId}/${displayId}/edit" method="post">
       <label>Title <small>(Required)</small><input type="text" name="title" value="${title}" maxlength="280"
           required /></label>
       <label>Summary <small>(Leave Blank for Automatic Summary)</small> <input name="summary" type="text"
@@ -101,9 +101,10 @@
         </fieldset>
         <button class="saveButton">Save</button>
         <input type="hidden" name="_csrf" value="${csrf}" />
+        <input type="hidden" name="isNew" value="${isNew}" />
     </form>
     ${isNew ? '' :
-    `<form action="/${displayId}/delete" method="post" class="deleteArticle">
+    `<form action="/@${authorDisplayId}/${displayId}/delete" method="post" class="deleteArticle">
       <fieldset>
         <legend>
           Delete Article
