@@ -28,7 +28,7 @@ const loginCallback = async ctx => {
   if (ctx.query.redirect) {
     return redirect(303, ctx.query.redirect)
   } else {
-    return redirect(303, `/@${user.displayId}`)
+    return redirect(303, `/@${user.displayId}/thoughts`)
   }
 }
 

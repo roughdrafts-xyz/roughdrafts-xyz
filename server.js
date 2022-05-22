@@ -64,7 +64,7 @@ module.exports = server(
   [
     get('/', async ctx => {
       if (ctx.session.user) {
-        return redirect(`/@${ctx.session.user.displayId}`)
+        return redirect(`/@${ctx.session.user.displayId}/thoughts`)
       } else {
         return render('login')
       }

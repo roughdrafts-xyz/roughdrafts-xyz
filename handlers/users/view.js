@@ -13,10 +13,16 @@ const viewUser = async ctx => {
   if (isUser) {
     const privateUser = await prisma.user.findUnique({
       where: { displayId: ctx.params.displayId },
-      include: { articles: true }
+      include: {
+        articles: {
+          orderBy: {
+            updatedAt: 'desc'
+          }
+        }
+      }
     })
     const newArticleId = await nanoid()
-    return render('home', {
+    return render('profile', {
       ...privateUser,
       isUser,
       newArticleId
@@ -26,7 +32,7 @@ const viewUser = async ctx => {
       where: { displayId: ctx.params.displayId },
       include: { articles: { where: { visibility: 'public' } } }
     })
-    return render('home', {
+    return render('profile', {
       ...publicUser,
       isUser
     })
@@ -34,21 +40,6 @@ const viewUser = async ctx => {
 
   // pagination
   // https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination
-
-  // List of stuff they've made thats public to view?
-  // or just be a dashboard
-  /*
-      username: 'Test User',
-      summary:
-        'Two thousand or so words to test out the summary of this fake user.',
-      articles: [
-        {
-          title: '🍎 Apple',
-          summary: 'Delicious red thing',
-          tags: '#red #apple #fruit'
-        }
-      ]
-  */
 }
 
 const downloadArticles = async ctx => {

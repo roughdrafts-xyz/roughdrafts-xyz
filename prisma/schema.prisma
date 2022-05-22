@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
@@ -21,6 +22,26 @@ model Article {
   authorDisplayId String
 
   @@unique(fields: [authorDisplayId, displayId], name: "slugId")
+  @@fulltext([rawContent])
+}
+
+model Thought {
+  id String @id @default(uuid())
+  content String @db.MediumText
+  rawContent String @db.MediumText
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  author User @relation(fields: [authorDisplayId], references: [displayId])
+  authorDisplayId String
+
+  tags Tag[]
+  @@fulltext([rawContent])
+}
+
+model Tag {
+  id String @id @default(uuid())
+  displayId String @db.VarChar(280)
+  thoughts Thought[]
 }
 
 model User {
@@ -30,4 +51,5 @@ model User {
   name String @db.VarChar(280) @default("Anonymous")
   summary String @db.VarChar(280) @default("This user has not set a summary.")
   articles Article[]
+  thoughts Thought[]
 }

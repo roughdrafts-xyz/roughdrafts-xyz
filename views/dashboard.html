@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  ${head}
+  <style>
+    header {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .newThoughtButton {
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <section>
+      <h2>Your Thoughts</h2>
+    </section>
+    <nav>
+      <a href="/@${displayId}">Profile</a>
+      <a href="/settings">Settings</a>
+    </nav>
+  </header>
+  <main>
+    <form action="/@${displayId}/thoughts" method="post">
+      <label for="thought">Add a New Thought</label>
+      <details>
+        <summary>Information about Thoughts</summary>
+        <dl>
+          <dt>Privacy</dt>
+          <dd>
+            <p>Only you can see your thoughts.</p>
+          </dd>
+
+          <dt>Tagging</dt>
+          <dd>
+            <p>You can add tags to your thoughts! This is done inline with a hashtag (#).</p>
+            <p>For example:</p>
+
+            <pre>I'm writing a message here and it has to do with #bats that I like.</pre>
+
+            <p>You can search your thoughts by keyword and by tags.</p>
+            <p>Your most used tags will be at the top of your search.</p>
+          </dd>
+        </dl>
+      </details>
+      <textarea name="thought" id="thought"></textarea>
+      <button class="newThoughtButton">Save Thought</button>
+    </form>
+
+    ${thoughts.map(
+    /* TODO this is actually broken */
+    curr => /* html */ `<section>
+      <h3><a href="/@${displayId}/${curr.displayId}">${curr.title}</a></h3>
+      <span>${curr.summary ? curr.summary : curr.rawContent.slice(0,280)}</span>
+    </section>`
+    )
+    .join('')}
+  </main>
+</body>
+
+</html>
