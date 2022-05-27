@@ -50,13 +50,13 @@
       </details>
       <textarea name="thought" id="thought"></textarea>
       <button class="newThoughtButton">Save Thought</button>
+      <input type="hidden" name="_csrf" value="${csrf}" />
     </form>
 
     ${thoughts.map(
     /* TODO this is actually broken */
     curr => /* html */ `<section>
-      <h3><a href="/@${displayId}/${curr.displayId}">${curr.title}</a></h3>
-      <span>${curr.summary ? curr.summary : curr.rawContent.slice(0,280)}</span>
+      ${curr.content}
     </section>`
     )
     .join('')}

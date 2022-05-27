@@ -17,7 +17,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@prisma/client": "^3.9.2",
+    "@prisma/client": "^3.14.0",
     "auto-load": "^3.0.4",
     "axios": "^0.27.2",
     "express-es6-template-engine": "^2.2.3",
@@ -34,10 +34,10 @@
     "server": "^1.0.37"
   },
   "devDependencies": {
+    "dotenv": "^16.0.0",
     "jest": "^27.5.1",
     "standard": "^16.0.4",
     "supertest": "^6.2.2",
-    "supertest-session": "^4.1.0",
-    "dotenv": "^16.0.0"
+    "supertest-session": "^4.1.0"
   }
 }
