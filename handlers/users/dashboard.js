@@ -39,7 +39,7 @@ const addThought = async ctx => {
       content,
       rawContent,
       displayId,
-      authorDisplayId: ctx.params.authorDisplayId,
+      authorDisplayId: ctx.params.displayId,
       tags: {
         create: tags
       }

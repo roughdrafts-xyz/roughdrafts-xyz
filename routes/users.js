@@ -14,7 +14,7 @@ module.exports = [
     handlers.thoughts.updateThought
   ),
   get('/@:displayId/thoughts', handlers.dashboard.viewDashboard),
-  post('/@:authorDisplayId/thoughts', handlers.dashboard.addThought),
+  post('/@:displayId/thoughts', handlers.dashboard.addThought),
   get('/@:displayId/:displayId_notes.zip', handlers.view.downloadArticles),
   post('/@:displayId/delete', handlers.settings.deleteUser),
   get('/settings', handlers.settings.viewSettings),
