@@ -39,14 +39,14 @@ const addThought = async ctx => {
       content,
       rawContent,
       displayId,
-      authorDisplayId: ctx.params.displayId,
+      authorDisplayId: ctx.params.authorDisplayId,
       tags: {
         create: tags
       }
     }
   })
 
-  return redirect(`/@${ctx.params.displayId}/thoughts`)
+  return redirect(`/@${ctx.params.authorDisplayId}/thoughts`)
 }
 
 module.exports = {

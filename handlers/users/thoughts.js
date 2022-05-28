@@ -48,8 +48,6 @@ const viewByTag = async ctx => {
     }
   })
 
-  console.log(thoughts)
-
   return render('thoughts/list', {
     thoughts,
     tagParams: ctx.params.tags
