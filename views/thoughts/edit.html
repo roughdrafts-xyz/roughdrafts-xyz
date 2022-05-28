@@ -39,16 +39,16 @@
 <body>
   <header>
     <section>
-      <h2>Your Thoughts</h2>
+      <h2>Editing Thought</h2>
     </section>
     <nav>
-      <a href="/@${displayId}">Profile</a>
-      <a href="/settings">Settings</a>
+      <a href="/">Home</a>
+      <a href="/@${authorDisplayId}/thoughts/${displayId}">Cancel</a>
     </nav>
   </header>
   <main>
-    <form action="/@${displayId}/thoughts" method="post">
-      <label for="thought">Add a New Thought</label>
+    <form action="/@${authorDisplayId}/thoughts/${displayId}/edit${isInline}" method="post">
+      <label for="thought">Edit this Thought</label>
       <details>
         <summary>Information about Thoughts</summary>
         <dl>
@@ -69,21 +69,10 @@
           </dd>
         </dl>
       </details>
-      <textarea name="thought" id="thought"></textarea>
+      <textarea name="thought" id="thought">${rawContent}</textarea>
       <button class="newThoughtButton">Save Thought</button>
       <input type="hidden" name="_csrf" value="${csrf}" />
     </form>
-
-    ${thoughts.map(
-    curr => /* html */ `<section class="thought">
-      ${curr.content}
-      <nav class="toolbar">
-        <a href="/@${displayId}/thoughts/${curr.displayId}">Permalink</a>
-        <a href="/@${displayId}/thoughts/${curr.displayId}/edit">Edit</a>
-      </nav>
-    </section>`
-    )
-    .join('')}
   </main>
 </body>
 
