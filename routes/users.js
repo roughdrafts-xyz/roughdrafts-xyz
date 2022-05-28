@@ -3,7 +3,7 @@ const handlers = require('auto-load')('handlers/users')
 
 module.exports = [
   get('/@:displayId', handlers.view.viewUser),
-  get('/@:authorDisplayId/thoughts/tagged/:tag', handlers.thoughts.viewByTag),
+  get('/@:authorDisplayId/thoughts/tagged/:tags', handlers.thoughts.viewByTag),
   get('/@:authorDisplayId/thoughts/:displayId', handlers.thoughts.viewById),
   get(
     '/@:authorDisplayId/thoughts/:displayId/edit',

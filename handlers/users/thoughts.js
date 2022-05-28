@@ -8,12 +8,12 @@ const md = require('markdown-it')()
   .disable(['heading', 'lheading'])
 
 const shouldAccess = (ctx, thought) => {
-  if (!thought) return true
-
-  return ctx.session?.user?.displayId === thought.authorDisplayId
+  return ctx.session?.user?.displayId === ctx.params.authorDisplayId
 }
 
 const viewById = async ctx => {
+  if (!shouldAccess(ctx)) throw new Error('Illegal Action')
+
   const thought = await prisma.thought.findUnique({
     where: {
       slugId: {
@@ -23,14 +23,41 @@ const viewById = async ctx => {
     }
   })
 
-  if (!shouldAccess(ctx, thought)) throw new Error('Illegal Action')
+  const tagParams = ctx.query.tags
 
-  return render('thoughts/view', thought)
+  return render('thoughts/view', {
+    ...thought,
+    tagParams
+  })
 }
 
-const viewByTag = async ctx => {}
+const viewByTag = async ctx => {
+  if (!shouldAccess(ctx)) throw new Error('Illegal Action')
+  const tags = ctx.params.tags.split(',').map(o => o.trim())
+
+  const thoughts = await prisma.thought.findMany({
+    where: {
+      authorDisplayId: ctx.params.authorDisplayId,
+      tags: {
+        some: {
+          displayId: {
+            in: tags
+          }
+        }
+      }
+    }
+  })
+
+  console.log(thoughts)
+
+  return render('thoughts/list', {
+    thoughts,
+    tagParams: ctx.params.tags
+  })
+}
 
 const getThoughtEditor = async ctx => {
+  if (!shouldAccess(ctx)) throw new Error('Illegal Action')
   const thought = await prisma.thought.findUnique({
     where: {
       slugId: {
@@ -40,27 +67,21 @@ const getThoughtEditor = async ctx => {
     }
   })
 
-  const isInline = ctx.query.isInline === 'true' ? '?isInline=true' : ''
+  const queryLine = [
+    ctx.query.isInline === 'true' ? 'isInline=true' : null,
+    ctx.query.tags ? `tags=${ctx.query.tags}` : null
+  ]
+    .filter(o => o)
+    .join('&')
 
-  console.log('isInline', isInline)
-  if (!shouldAccess(ctx, thought)) throw new Error('Illegal Action')
   return render('thoughts/edit', {
     ...thought,
-    isInline
+    queryLine: queryLine ? `?${queryLine}` : ''
   })
 }
 
 const updateThought = async ctx => {
-  const thought = await prisma.thought.findUnique({
-    where: {
-      slugId: {
-        authorDisplayId: ctx.params.authorDisplayId,
-        displayId: ctx.params.displayId
-      }
-    }
-  })
-
-  if (!shouldAccess(ctx, thought)) throw new Error('Illegal Action')
+  if (!shouldAccess(ctx)) throw new Error('Illegal Action')
 
   const rawContent = ctx.body.thought
   const tags = extractTags(rawContent).map(curr => ({ displayId: curr }))
@@ -85,11 +106,23 @@ const updateThought = async ctx => {
   })
 
   if (ctx.query.isInline === 'true') {
-    return redirect(`/@${ctx.params.authorDisplayId}/thoughts`)
+    if (ctx.query.tags) {
+      return redirect(
+        `/@${ctx.params.authorDisplayId}/thoughts/tagged/${ctx.query.tags}`
+      )
+    } else {
+      return redirect(`/@${ctx.params.authorDisplayId}/thoughts`)
+    }
   } else {
-    return redirect(
-      `/@${ctx.params.authorDisplayId}/thoughts/${ctx.params.displayId}`
-    )
+    if (ctx.query.tags) {
+      return redirect(
+        `/@${ctx.params.authorDisplayId}/thoughts/${ctx.params.displayId}?tags=${ctx.query.tags}`
+      )
+    } else {
+      return redirect(
+        `/@${ctx.params.authorDisplayId}/thoughts/${ctx.params.displayId}`
+      )
+    }
   }
 }
 

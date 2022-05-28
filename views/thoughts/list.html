@@ -39,25 +39,23 @@
 <body>
   <header>
     <section>
-      <h2>A Thought</h2>
+      <h2>Thoughts tagged ${tagParams}</h2>
     </section>
     <nav>
-      ${tagParams
-      ? `<a href="/@${authorDisplayId}/thoughts/tagged/${tagParams}">Back to Search</a>`
-      : `<a href="/">Home</a>`
-      }
+      <a href="/">Home</a>
     </nav>
   </header>
   <main>
-    <section class="thought">
-      ${content}
+    ${thoughts.map(
+    curr => /* html */ `<section class="thought">
+      ${curr.content}
       <nav class="toolbar">
-        ${tagParams
-        ? `<a href="/@${authorDisplayId}/thoughts/${displayId}/edit?tags=${tagParams}">Edit</a>`
-        : `<a href="/@${authorDisplayId}/thoughts/${displayId}/edit">Edit</a>`
-        }
+        <a href="/@${curr.authorDisplayId}/thoughts/${curr.displayId}?tags=${tagParams}">Permalink</a>
+        <a href="/@${curr.authorDisplayId}/thoughts/${curr.displayId}/edit?isInline=true&tags=${tagParams}">Edit</a>
       </nav>
-    </section>
+    </section>`
+    )
+    .join('')}
   </main>
 </body>
 

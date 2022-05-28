@@ -9,7 +9,9 @@ const doTagsHack = ctx =>
     .split(' ')
     .map(o => {
       if (o.startsWith('#')) {
-        return `[${o}](/@${ctx.params.displayId}/thoughts/tagged/${o.slice(1)})`
+        return `[${o}](/@${
+          ctx.params.authorDisplayId
+        }/thoughts/tagged/${o.slice(1)})`
       }
       return o
     })
