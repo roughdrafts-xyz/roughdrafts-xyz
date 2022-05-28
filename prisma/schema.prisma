@@ -27,6 +27,7 @@ model Article {
 
 model Thought {
   id String @id @default(uuid())
+  displayId String
   content String @db.MediumText
   rawContent String @db.MediumText
   createdAt DateTime @default(now())
@@ -36,6 +37,7 @@ model Thought {
 
   tags Tag[]
   @@fulltext([rawContent])
+  @@unique(fields: [authorDisplayId, displayId], name: "slugId")
 }
 
 model Tag {

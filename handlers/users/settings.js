@@ -17,7 +17,7 @@ const viewSettings = async ctx => {
   })
   if (!user) throw new Error('Illegal Action')
   // Expose download link to personal sqlite db
-  return render('userSettings', {
+  return render('settings', {
     ...user,
     updateStatus: ''
   })
@@ -34,7 +34,7 @@ const updateSettings = async ctx => {
     })
     ctx.session.user = user
     // do settings updates
-    return render('userSettings', {
+    return render('settings', {
       ...user,
       updateStatus:
         "<section role='status'>Settings saved succesfully.</section>"
@@ -52,7 +52,7 @@ const updateSettings = async ctx => {
     const user = await prisma.user.findUnique({
       where: { id }
     })
-    return render('userSettings', {
+    return render('settings', {
       ...user,
       updateStatus
     })

@@ -1,38 +1,41 @@
 const { render, redirect } = require('server/reply')
-const { extractTags, doTagsHack } = require('./tagsHacks')
 const prisma = require('../../prisma')
-const nanoid = require('../../nanoid')
+const { extractTags, doTagsHack } = require('./tagsHacks')
 const md = require('markdown-it')()
   .use(require('markdown-it-emoji'))
   .use(require('markdown-it-highlightjs'))
   .use(require('markdown-it-external-links'))
   .disable(['heading', 'lheading'])
 
-const viewDashboard = async ctx => {
-  const user = await prisma.user.findUnique({
-    where: { displayId: ctx.params.displayId },
-    include: {
-      thoughts: {
-        orderBy: {
-          updatedAt: 'desc'
-        }
+const shouldDisplay = (ctx, thought) => {
+  if (!thought) return true
+
+  return ctx.session?.user?.displayId === thought.authorDisplayId
+}
+
+const viewById = async ctx => {
+  const thought = await prisma.thought.findUnique({
+    where: {
+      slugId: {
+        authorDisplayId: ctx.params.authorDisplayId,
+        displayId: ctx.params.displayId
       }
     }
   })
-  const newArticleId = await nanoid()
 
-  return render('dashboard', {
-    ...user,
-    newArticleId
-  })
+  if (!shouldDisplay(ctx, thought)) throw new Error('Illegal Action')
+  console.log(thought)
+
+  return render('thoughts/view', thought)
 }
 
-const addThought = async ctx => {
+const viewByTag = async ctx => {}
+
+const edit = async ctx => {
   const rawContent = ctx.body.thought
   const tags = extractTags(rawContent).map(curr => ({ displayId: curr }))
   const tagHackedContent = doTagsHack(ctx)
   const content = md.render(tagHackedContent)
-  const displayId = await nanoid()
 
   await prisma.thought.create({
     data: {
@@ -50,6 +53,7 @@ const addThought = async ctx => {
 }
 
 module.exports = {
-  addThought,
-  viewDashboard
+  edit,
+  viewById,
+  viewByTag
 }

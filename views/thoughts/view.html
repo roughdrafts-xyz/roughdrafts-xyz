@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  ${head}
+  <style>
+    header {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .newThoughtButton {
+      width: 100%;
+    }
+
+    .thought {
+      display: flex;
+      flex-direction: column;
+      border-bottom: 0.25ch dashed black;
+    }
+
+    @media(prefers-color-scheme: dark) {
+      .thought {
+        border-bottom: 0.25ch dashed white;
+      }
+    }
+
+    .thought>p {
+      padding: 0;
+      margin: 0;
+    }
+
+    .toolbar {
+      margin-left: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <section>
+      <h2>A Thought</h2>
+    </section>
+    <nav>
+      <a href="/">Home</a>
+    </nav>
+  </header>
+  <main>
+    <section class="thought">
+      ${content}
+      <nav class="toolbar">
+        <a href="/@${authorDisplayId}/thoughts/${displayId}/edit">Edit</a>
+      </nav>
+    </section>
+  </main>
+</body>
+
+</html>
