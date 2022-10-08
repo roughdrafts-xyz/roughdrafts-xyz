@@ -12,9 +12,6 @@ const { modern } = server.utils
 const es6Renderer = require('express-es6-template-engine')
 const routes = require('auto-load')('routes')
 const grant = require('grant').express()
-const cors = require('cors')({
-  origin: ['https://unpkg.com/', 'https://cdnjs.cloudflare.com/']
-})
 
 // Run the server!
 module.exports = server(
@@ -64,7 +61,6 @@ module.exports = server(
       }
     })
   ),
-  modern(cors),
   [
     get('/', async ctx => {
       if (ctx.session.user) {
