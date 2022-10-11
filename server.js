@@ -28,6 +28,9 @@ module.exports = server(
         maxAge: 8294400000 // 96 Days, Arbitrarily chosen
       }
     },
+    security: {
+      contentSecurityPolicy: false
+    },
     engine: {
       html: (file, options, cb) =>
         es6Renderer(
