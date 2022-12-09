@@ -21,14 +21,21 @@
       justify-content: space-between;
     }
 
-    .editor-toolbar button {
+    .editor-toolbar button,
+    .editor-toolbar.fullscreen button {
       color: initial;
     }
 
+    .editor-toolbar button:hover,
+    .editor-toolbar.fullscreen button:hover {
+      color: initial;
+    }
+
+    .editor-toolbar button.active,
     .editor-toolbar button:hover {
-      color: initial;
+      background-color: #982c61 !important;
+      color: white !important;
     }
-
 
     input:not([type='radio']) {
       width: 100%;
@@ -45,25 +52,50 @@
         border-top: 0.25ch dashed white;
       }
 
-      .editor-toolbar {
-        background-color: #bbb;
+      .saveButton {
+        width: 100%;
       }
 
+      [role=alert] {
+        background-color: #A5243D;
+        padding: 0.5em;
+        border-radius: 4px;
+        font-weight: bold;
+      }
+
+      .EasyMDEContainer,
+      .editor-toolbar.fullscreen {
+        background-color: #4a4a4a !important;
+      }
+
+      .CodeMirror,
       .editor-preview {
-        background: #fafafa;
-        color: #4a4a4a;
+        color: #f9f9f9 !important;
+        border-color: #4a4a4a !important;
+        background-color: #222222 !important;
       }
-    }
 
-    .saveButton {
-      width: 100%;
-    }
+      .cm-s-easymde .CodeMirror-cursor {
+        border-color: #f9f9f9 !important;
+      }
 
-    [role=alert] {
-      background-color: #A5243D;
-      padding: 0.5em;
-      border-radius: 4px;
-      font-weight: bold;
+      .editor-toolbar {
+        border-color: #4a4a4a !important;
+      }
+
+      .editor-toolbar button i {
+        color: #f9f9f9 !important;
+      }
+
+      .editor-toolbar button.active,
+      .editor-toolbar button:hover {
+        background-color: #2c8898 !important;
+      }
+
+      .editor-preview pre,
+      .cm-comment {
+        background-color: #4a4a4a !important;
+      }
     }
   </style>
 </head>
