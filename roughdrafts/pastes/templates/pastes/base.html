@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta name="description" content="Pastes" />
+    <meta name="keywords" content="pastes hosting" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      {% block head_title %}Roughdrafts XYZ{% endblock %}
+    </title>
+    {% block extra_head %}{% endblock %}
+  </head>
+  <body>
+    <header>
+      <nav>
+        {% block nav %}
+        {% endblock nav %}
+        {% if request.user.is_authenticated %}
+          <ul>
+            <li>logout</li>
+          </ul>
+        {% endif %}
+      </nav>
+    </header>
+    {% block body %}
+      <main>
+        <article>
+          <header>
+            <h1>
+              {% block page_title %}
+              {% endblock page_title %}
+            </h1>
+            {% block extra_header %}
+            {% endblock extra_header %}
+          </header>
+          {% block content %}
+          {% endblock content %}
+        </article>
+      </main>
+    {% endblock body %}
+    <footer>
+      {% block footer %}
+      {% endblock footer %}
+    </footer>
+  </body>
+</html>

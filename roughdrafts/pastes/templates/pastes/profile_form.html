@@ -1,0 +1,13 @@
+{% extends "pastes/base.html" %}
+{% load paste_nav %}
+{% block nav %}
+  {% nav %}
+{% endnav %}
+{% endblock nav %}
+{% block body %}
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_div }}
+    <button type="submit" name="action">Save Profile</button>
+  </form>
+{% endblock body %}
