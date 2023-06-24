@@ -1,5 +1,3 @@
-from collections.abc import Iterable
-from enum import Enum
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
@@ -12,6 +10,12 @@ class Paste(models.Model):
         PRIVATE = 0
         UNLISTED = 1
         PUBLIC = 2
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                "editor", "url_endpoint", name="editor_paste_url_endpoint")
+        ]
 
     editable_fields = ["title", "summary",
                        "url_endpoint", "privacy", "content"]
@@ -54,7 +58,7 @@ class Profile(models.Model):
     user: User = models.OneToOneField(
         User, on_delete=models.SET_NULL, null=True, blank=True)  # type: ignore
 
-    url_endpoint = models.SlugField(blank=True)
+    url_endpoint = models.SlugField(blank=True, unique=True)
     display_name = models.CharField(max_length=140, blank=True)
     summary = models.CharField(max_length=140, blank=True)
 
