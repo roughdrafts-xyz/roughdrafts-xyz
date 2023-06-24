@@ -1,0 +1,23 @@
+{% extends "pastes/base.html" %}
+{% load paste_nav %}
+{% block page_title %}
+    {{ paste.title }}
+{% endblock page_title %}
+{% block extra_header %}
+    <p>{{ paste.summary }}</p>
+    <p>
+        by <a href="{% url 'pastes:profile' paste.editor.pk %}">{{ paste.editor.profile.profile_name }}</a>
+    </p>
+{% endblock extra_header %}
+{% block nav %}
+    {% nav %}
+    <li>
+        <a href="{% url 'pastes:update' paste.id %}">edit</a>
+    </li>
+{% endnav %}
+{% endblock nav %}
+{% block content %}
+    {% autoescape off %}
+        {{ paste.rendered_content }}
+    {% endautoescape %}
+{% endblock content %}
