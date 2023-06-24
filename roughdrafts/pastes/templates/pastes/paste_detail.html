@@ -6,13 +6,13 @@
 {% block extra_header %}
     <p>{{ paste.summary }}</p>
     <p>
-        by <a href="{% url 'pastes:profile' paste.editor.pk %}">{{ paste.editor.profile.profile_name }}</a>
+        by <a href="{% url 'pastes:profile' paste.editor.profile.url_endpoint %}">{{ paste.editor.profile.profile_name }}</a>
     </p>
 {% endblock extra_header %}
 {% block nav %}
     {% nav %}
     <li>
-        <a href="{% url 'pastes:update' paste.id %}">edit</a>
+        <a href="{% url 'pastes:update' paste.editor.profile.url_endpoint paste.url_endpoint %}">edit</a>
     </li>
 {% endnav %}
 {% endblock nav %}

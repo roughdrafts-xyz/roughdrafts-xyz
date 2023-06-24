@@ -14,10 +14,10 @@
   {% nav %}
   {% if paste %}
     <li>
-      <a href="{% url 'pastes:delete' paste.id %}">delete</a>
+      <a href="{% url 'pastes:delete' paste.editor.profile.url_endpoint paste.url_endpoint %}">delete</a>
     </li>
     <li>
-      <a href="{% url 'pastes:detail' paste.id %}">cancel</a>
+      <a href="{% url 'pastes:detail' paste.editor.profile.url_endpoint paste.url_endpoint %}">cancel</a>
     </li>
   {% endif %}
 {% endnav %}
@@ -29,7 +29,7 @@
     <footer>
       <button type="submit" name="action">Paste it!</button>
       {% if paste %}
-        <a href="{% url 'pastes:detail' paste.id %}">
+        <a href="{% url 'pastes:detail' paste.editor.profile.url_endpoint paste.url_endpoint %}">
           <button type="button">Cancel</button>
         </a>
       {% endif %}

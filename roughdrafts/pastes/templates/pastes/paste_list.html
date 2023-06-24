@@ -17,7 +17,7 @@
   {% if paste_list %}
     {% for paste in paste_list %}
       <section>
-        <a href="{% url 'pastes:detail' paste.id %}">
+        <a href="{% url 'pastes:detail' paste.editor.profile.url_endpoint paste.url_endpoint %}">
           <h3>{{ paste.title }}</h3>
         </a>
         <p>

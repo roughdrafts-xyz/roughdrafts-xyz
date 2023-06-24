@@ -8,6 +8,11 @@
   <form method="post">
     {% csrf_token %}
     {{ form.as_div }}
-    <button type="submit" name="action">Save Profile</button>
+    <footer>
+      <button type="submit" name="action">Save Profile</button>
+      <a href="{% url 'pastes:profile' profile.url_endpoint %}">
+        <button type="button">Cancel</button>
+      </a>
+    </footer>
   </form>
 {% endblock body %}

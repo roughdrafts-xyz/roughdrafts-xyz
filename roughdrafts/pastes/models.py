@@ -32,7 +32,14 @@ class Paste(models.Model):
         super().save(*args, **kwargs)  # Call the "real" save() method.
 
     def get_absolute_url(self):
-        return reverse("pastes:detail", kwargs={"pk": self.pk})
+        if self.editor is None:
+            profile_name = "unclaimed"
+        else:
+            profile_name = self.editor.profile.url_endpoint  # type: ignore
+        return reverse("pastes:detail", kwargs={
+            "profile_name": profile_name,
+            "paste_name": self.url_endpoint
+        })
 
     @staticmethod
     def preview_render(content):
@@ -43,6 +50,7 @@ class Paste(models.Model):
 
 
 class Profile(models.Model):
+    editable_fields = ["display_name", "url_endpoint", "summary"]
     user: User = models.OneToOneField(
         User, on_delete=models.SET_NULL, null=True, blank=True)  # type: ignore
 
@@ -57,7 +65,7 @@ class Profile(models.Model):
         return self.user.username
 
     def get_absolute_url(self):
-        return reverse("pastes:profile", kwargs={"user_id": self.user.pk})
+        return reverse("pastes:profile", kwargs={"profile_name": self.url_endpoint})
 
     def __str__(self) -> str:
         return self.user.username

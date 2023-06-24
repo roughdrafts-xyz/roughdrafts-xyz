@@ -34,7 +34,9 @@ class ProfileListView(ListView):
     template_name = "pastes/paste_list.html"
 
     def get_queryset(self):
-        user = get_object_or_404(User, id=self.kwargs["user_id"])
+        profile = get_object_or_404(
+            Profile, url_endpoint=self.kwargs["profile_name"])
+        user = profile.user
         return Paste.objects.filter(editor=user)
 
 
@@ -42,7 +44,10 @@ class PasteDetailView(DetailView):
     model = Paste
 
     def get_object(self, queryset=None):
-        paste: Paste = super().get_object(queryset)  # type: ignore
+        profile = get_object_or_404(
+            Profile, url_endpoint=self.kwargs["profile_name"])
+        paste = get_object_or_404(
+            Paste, url_endpoint=self.kwargs["paste_name"], editor=profile.user)
         if (paste.privacy in [Paste.Privacy.PUBLIC, Paste.Privacy.UNLISTED]):
             return paste
         if (paste.editor == self.request.user):
@@ -59,19 +64,29 @@ class PasteCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
+def get_paste(self, queryset=None):
+    profile = get_object_or_404(
+        Profile, url_endpoint=self.kwargs["profile_name"])
+    paste = get_object_or_404(
+        Paste, url_endpoint=self.kwargs["paste_name"], editor=profile.user)
+    return paste
+
+
 class PasteUpdateView(UserOwnsPasteView, UpdateView):
     model = Paste
     fields = Paste.editable_fields
+    get_object = get_paste
 
 
 class PasteDeleteView(UserOwnsPasteView, DeleteView):
     model = Paste
     success_url = reverse_lazy("pastes:list")
+    get_object = get_paste
 
 
 class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     model = Profile
-    fields = ["display_name", "url_endpoint", "summary"]
+    fields = Profile.editable_fields
 
     def get_object(self, queryset=None):
         return Profile.objects.get(user=self.request.user)
