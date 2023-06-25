@@ -1,3 +1,4 @@
+from collections.abc import Collection
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
@@ -31,6 +32,11 @@ class Paste(models.Model):
 
     editor = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, blank=True)
+
+    def clean_fields(self, exclude) -> None:
+        if not self.url_endpoint:
+            self.url_endpoint = slugify(self.title)
+        return super().clean_fields(exclude)
 
     def save(self, *args, **kwargs):
         self.rendered_content = self.preview_render(self.content)

@@ -85,7 +85,7 @@ class PasteDeleteView(UserOwnsPasteView, DeleteView):
     def get_initial(self) -> dict[str, Any]:
         return {
             "url_endpoint": None,
-            "expected_endpoint": self.object.url_endpoint
+            "expected_endpoint": self.object.url_endpoint  # type:ignore
         }
 
 
