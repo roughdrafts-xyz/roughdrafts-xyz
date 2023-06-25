@@ -30,8 +30,7 @@ class Paste(models.Model):
     content = models.TextField()
     rendered_content = models.TextField()
 
-    editor = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, blank=True)
+    editor = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def clean_fields(self, exclude) -> None:
         if not self.url_endpoint:
@@ -43,10 +42,7 @@ class Paste(models.Model):
         super().save(*args, **kwargs)  # Call the "real" save() method.
 
     def get_absolute_url(self):
-        if self.editor is None:
-            profile_endpoint = "unclaimed"
-        else:
-            profile_endpoint = self.editor.profile.profile_endpoint  # type: ignore
+        profile_endpoint = self.editor.profile.profile_endpoint  # type: ignore
         return reverse("pastes:detail", kwargs={
             "profile_endpoint": profile_endpoint,
             "paste_name": self.url_endpoint
@@ -70,10 +66,10 @@ class Profile(models.Model):
     display_name = models.CharField(max_length=140, null=True, blank=True)
     summary = models.CharField(max_length=140, null=True, blank=True)
 
-    def save(self, *args, **kwargs):
+    def clean_fields(self, exclude):
         self.profile_endpoint = self.get_url_endpoint()
         self.url_endpoint = self.profile_endpoint
-        super().save(*args, **kwargs)  # Call the "real" save() method.
+        return super().clean_fields(exclude)
 
     @classmethod
     def get_get_safe_url(cls, user):
