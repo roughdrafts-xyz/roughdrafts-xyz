@@ -9,7 +9,8 @@ from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView, UpdateView, DeleteView, CreateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic.detail import SingleObjectMixin
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse
+from django import forms
 
 from .models import Paste, Profile
 
@@ -62,10 +63,30 @@ class PasteUpdateView(UserOwnsPasteView, UpdateView):
     get_object = get_paste
 
 
+class DeleteForm(forms.Form):
+    url_endpoint = forms.SlugField()
+    expected_endpoint = forms.SlugField(widget=forms.HiddenInput)
+
+    def clean(self):
+        form_data = self.cleaned_data
+        url_endpoint = form_data.get("url_endpoint")
+        expected_endpoint = form_data.get("expected_endpoint")
+        if (url_endpoint != expected_endpoint):
+            self.add_error("url_endpoint", "url needs to match")
+        return form_data
+
+
 class PasteDeleteView(UserOwnsPasteView, DeleteView):
     model = Paste
     success_url = reverse_lazy("pastes:list")
+    form_class = DeleteForm
     get_object = get_paste
+
+    def get_initial(self) -> dict[str, Any]:
+        return {
+            "url_endpoint": None,
+            "expected_endpoint": self.object.url_endpoint
+        }
 
 
 class ProfileDetailView(DetailView):

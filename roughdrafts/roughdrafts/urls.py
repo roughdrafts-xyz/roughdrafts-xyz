@@ -18,10 +18,13 @@ from django.contrib import admin
 from django.views.generic import TemplateView
 from django.urls import path, include
 
+from pastes import views as pastes_views
+
 
 urlpatterns = [
     path("home/", TemplateView.as_view(template_name="roughdrafts/home.html")),
     path('accounts/', include('allauth.urls')),
     path('admin/', admin.site.urls),
     path('', include("pastes.urls")),
+    path('@', include("pastes.urls")),
 ]
