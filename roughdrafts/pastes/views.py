@@ -25,29 +25,11 @@ class UserOwnsPasteView(UserPassesTestMixin, SingleObjectMixin, View):
         return HttpResponseRedirect(obj.get_absolute_url())
 
 
-class PasteListView(LoginRequiredMixin, ListView):
-    def get_queryset(self):
-        return Paste.objects.filter(editor=self.request.user)
-
-
-class ProfileListView(ListView):
-    template_name = "pastes/paste_list.html"
-
-    def get_queryset(self):
-        profile = get_object_or_404(
-            Profile, url_endpoint=self.kwargs["profile_name"])
-        user = profile.user
-        return Paste.objects.filter(editor=user)
-
-
 class PasteDetailView(DetailView):
     model = Paste
 
     def get_object(self, queryset=None):
-        profile = get_object_or_404(
-            Profile, url_endpoint=self.kwargs["profile_name"])
-        paste = get_object_or_404(
-            Paste, url_endpoint=self.kwargs["paste_name"], editor=profile.user)
+        paste = get_paste(self, queryset)
         if (paste.privacy in [Paste.Privacy.PUBLIC, Paste.Privacy.UNLISTED]):
             return paste
         if (paste.editor == self.request.user):
@@ -66,7 +48,7 @@ class PasteCreateView(LoginRequiredMixin, CreateView):
 
 def get_paste(self, queryset=None):
     profile = get_object_or_404(
-        Profile, url_endpoint=self.kwargs["profile_name"])
+        Profile, profile_endpoint=self.kwargs["profile_endpoint"])
     paste = get_object_or_404(
         Paste, url_endpoint=self.kwargs["paste_name"], editor=profile.user)
     return paste
@@ -82,6 +64,21 @@ class PasteDeleteView(UserOwnsPasteView, DeleteView):
     model = Paste
     success_url = reverse_lazy("pastes:list")
     get_object = get_paste
+
+
+class ProfileDetailView(DetailView):
+    model = Profile
+
+    def get_object(self, queryset=None):
+        profile_endpoint = self.kwargs.get("profile_endpoint", None)
+        if (profile_endpoint):
+            profile = get_object_or_404(
+                Profile, profile_endpoint=profile_endpoint)
+        else:
+            profile = self.request.user.profile  # type:ignore
+        pastes = Paste.objects.filter(editor=profile.user)
+        profile.pastes = pastes  # type:ignore
+        return profile
 
 
 class ProfileUpdateView(LoginRequiredMixin, UpdateView):

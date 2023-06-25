@@ -3,21 +3,21 @@
 {% block nav %}
   {% nav %}
   <li>
-    <a href="{% url "pastes:create" %}">Create new Paste</a>
+    <a href="{% url "pastes:create" %}">create new paste</a>
   </li>
   <li>
-    <a href="{% url "pastes:profile.edit" %}">Update Profile</a>
+    <a href="{% url "pastes:profile.edit" %}">update profile</a>
   </li>
 {% endnav %}
 {% endblock nav %}
 {% block page_title %}
-  {{ paste_list.0.editor.profile.profile_name }}
+  {{ profile.profile_name }}
 {% endblock page_title %}
 {% block content %}
-  {% if paste_list %}
-    {% for paste in paste_list %}
+  {% if profile.pastes %}
+    {% for paste in profile.pastes %}
       <section>
-        <a href="{% url 'pastes:detail' paste.editor.profile.url_endpoint paste.url_endpoint %}">
+        <a href="{% url 'pastes:detail' profile.url_endpoint paste.url_endpoint %}">
           <h3>{{ paste.title }}</h3>
         </a>
         <p>

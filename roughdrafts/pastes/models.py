@@ -38,11 +38,11 @@ class Paste(models.Model):
 
     def get_absolute_url(self):
         if self.editor is None:
-            profile_name = "unclaimed"
+            profile_endpoint = "unclaimed"
         else:
-            profile_name = self.editor.profile.url_endpoint  # type: ignore
+            profile_endpoint = self.editor.profile.profile_endpoint  # type: ignore
         return reverse("pastes:detail", kwargs={
-            "profile_name": profile_name,
+            "profile_endpoint": profile_endpoint,
             "paste_name": self.url_endpoint
         })
 
@@ -69,12 +69,6 @@ class Profile(models.Model):
         self.url_endpoint = self.profile_endpoint
         super().save(*args, **kwargs)  # Call the "real" save() method.
 
-    @property
-    def profile_name(self):
-        if (self.display_name):
-            return self.display_name
-        return self.user.username
-
     @classmethod
     def get_get_safe_url(cls, user):
         def get_safe_url(url):
@@ -96,8 +90,14 @@ class Profile(models.Model):
         if (safe_url):
             return safe_url
 
+    @property
+    def profile_name(self):
+        if (self.display_name):
+            return self.display_name
+        return self.user.username
+
     def get_absolute_url(self):
-        return reverse("pastes:profile", kwargs={"profile_name": self.url_endpoint})
+        return reverse("pastes:profile", kwargs={"profile_endpoint": self.url_endpoint})
 
     def __str__(self) -> str:
         return self.user.username
