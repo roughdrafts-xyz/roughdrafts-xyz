@@ -1,7 +1,9 @@
+from typing import Any
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from django.db import models
-from django.http.response import HttpResponseRedirect
+from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView, UpdateView, DeleteView, CreateView, View
@@ -69,12 +71,20 @@ class PasteDeleteView(UserOwnsPasteView, DeleteView):
 class ProfileDetailView(DetailView):
     model = Profile
 
+    def render_to_response(self, context: dict[str, Any], **response_kwargs: Any) -> HttpResponse:
+        profile = context.get("profile", None)
+        if (profile is None):
+            return HttpResponseRedirect(settings.LOGOUT_REDIRECT_URL)
+        return super().render_to_response(context, **response_kwargs)
+
     def get_object(self, queryset=None):
         profile_endpoint = self.kwargs.get("profile_endpoint", None)
         if (profile_endpoint):
             profile = get_object_or_404(
                 Profile, profile_endpoint=profile_endpoint)
         else:
+            if (not self.request.user.is_authenticated):
+                return None
             profile = self.request.user.profile  # type:ignore
         pastes = Paste.objects.filter(editor=profile.user)
         profile.pastes = pastes  # type:ignore
