@@ -1,6 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
+from django.utils.text import slugify
 from pypandoc import convert_text
 from nh3 import clean
 
@@ -54,19 +55,46 @@ class Paste(models.Model):
 
 
 class Profile(models.Model):
-    editable_fields = ["display_name", "url_endpoint", "summary"]
+    editable_fields = ["display_name", "profile_endpoint", "summary"]
     user: User = models.OneToOneField(
-        User, on_delete=models.SET_NULL, null=True, blank=True)  # type: ignore
+        User, on_delete=models.SET_NULL, null=True)  # type: ignore
 
-    url_endpoint = models.SlugField(blank=True, unique=True)
-    display_name = models.CharField(max_length=140, blank=True)
-    summary = models.CharField(max_length=140, blank=True)
+    url_endpoint = models.SlugField(null=True, unique=True)
+    profile_endpoint = models.SlugField(null=True, blank=True, unique=True)
+    display_name = models.CharField(max_length=140, null=True, blank=True)
+    summary = models.CharField(max_length=140, null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        self.profile_endpoint = self.get_url_endpoint()
+        self.url_endpoint = self.profile_endpoint
+        super().save(*args, **kwargs)  # Call the "real" save() method.
 
     @property
     def profile_name(self):
         if (self.display_name):
             return self.display_name
         return self.user.username
+
+    @classmethod
+    def get_get_safe_url(cls, user):
+        def get_safe_url(url):
+            if (url):
+                p_endpoint = slugify(url)
+                if not cls.objects.exclude(user=user).filter(url_endpoint=p_endpoint).exists():
+                    return p_endpoint
+        return get_safe_url
+
+    def get_url_endpoint(self):
+        get_safe_url = self.get_get_safe_url(self.user)
+        safe_url = get_safe_url(self.profile_endpoint)
+        if (safe_url):
+            return safe_url
+        safe_url = get_safe_url(self.display_name)
+        if (safe_url):
+            return safe_url
+        safe_url = get_safe_url(self.user.username)
+        if (safe_url):
+            return safe_url
 
     def get_absolute_url(self):
         return reverse("pastes:profile", kwargs={"profile_name": self.url_endpoint})

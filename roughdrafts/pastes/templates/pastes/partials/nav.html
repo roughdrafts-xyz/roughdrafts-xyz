@@ -5,13 +5,13 @@
         </li>
         {{ extra_nav }}
         <li>
-            <a href="{% url 'logout' %}">logout</a>
+            <a href="{% url 'account_logout' %}">logout</a>
         </li>
     </ul>
 {% else %}
     <ul>
         <li>
-            <a href="{% url 'login' %}">login</a>
+            <a href="{% url 'account_login' %}">login</a>
         </li>
     </ul>
 {% endif %}

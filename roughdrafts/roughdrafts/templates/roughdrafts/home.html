@@ -3,19 +3,8 @@
     Rough Drafts
 {% endblock page_title %}
 {% block content %}
-    <p>If you're already familiar with wikis, feel free to just hop in and</p>
     <p>
-        <a href="/connect/discord">
-            <button class="connectWithDiscord">Connect with Discord</button>
-        </a>
-    </p>
-    <p>
-        If you run into a bug, think of a feature you'd like, or see something that can be improved please reach out and
-        open an issue on <a href="https://github.com/kinostl/roughdrafts-xyz/issues">Github</a>
-    </p>
-    <h2>Synopsis</h2>
-    <p>
-        A wiki-like program that lets you write articles in <a href="https://commonmark.org/help/">commonmark style
+        A personal wiki-like program that lets you write articles in <a href="https://commonmark.org/help/">commonmark style
         markdown</a>.
     </p>
     <pre style="word-wrap:break-word; white-space: pre-wrap;">**Markdown** is the formatting language that is frequently used in a lot of programs, such as the popular *Discord*. It looks exactly like this little blurb.
@@ -24,4 +13,14 @@
 - Making lists
 - Headers
 - Bolding and Italics</pre>
+    <a href="{% url 'account_login' %}">
+        <button type="button">Login</button>
+    </a>
+    <a href="{% url 'account_signup' %}">
+        <button type="button">Sign Up</button>
+    </a>
+    <p>
+        If you run into a bug, think of a feature you'd like, or see something that can be improved please reach out and
+        open an issue on <a href="https://github.com/kinostl/roughdrafts-xyz/issues">Github</a>
+    </p>
 {% endblock content %}
