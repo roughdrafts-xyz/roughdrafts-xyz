@@ -1,5 +1,6 @@
 from typing import Any
 from django.conf import settings
+from django.contrib.auth import get_user_model, logout
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from django.db import models
@@ -106,7 +107,8 @@ class ProfileDetailView(DetailView):
         else:
             if (not self.request.user.is_authenticated):
                 return None
-            profile = self.request.user.profile  # type:ignore
+            profile = get_object_or_404(
+                Profile, user=self.request.user)
         pastes = Paste.objects.filter(editor=profile.user)
         profile.pastes = pastes  # type:ignore
         return profile
@@ -118,6 +120,32 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_object(self, queryset=None):
         return Profile.objects.get(user=self.request.user)
+
+
+class ProfileDeleteView(LoginRequiredMixin, DeleteView):
+    model = Profile
+    success_url = settings.LOGOUT_REDIRECT_URL
+    form_class = DeleteForm
+
+    def form_valid(self, form: Any) -> HttpResponse:
+        user_pk = self.request.user.pk
+        print(user_pk)
+        logout(self.request)
+        User = get_user_model()
+        q = User.objects.filter(pk=user_pk)
+        print(q)
+        q.delete()
+        print(q)
+        return super().form_valid(form)  # type: ignore
+
+    def get_object(self, queryset=None):
+        return Profile.objects.get(user=self.request.user)
+
+    def get_initial(self) -> dict[str, Any]:
+        return {
+            "url_endpoint": None,
+            "expected_endpoint": self.object.url_endpoint  # type:ignore
+        }
 
 
 class PastePreview(View):

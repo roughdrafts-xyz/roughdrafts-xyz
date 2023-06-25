@@ -1,4 +1,4 @@
-from collections.abc import Collection
+from collections.abc import Collection, Iterable
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
@@ -59,17 +59,17 @@ class Paste(models.Model):
 class Profile(models.Model):
     editable_fields = ["display_name", "profile_endpoint", "summary"]
     user: User = models.OneToOneField(
-        User, on_delete=models.SET_NULL, null=True)  # type: ignore
+        User, on_delete=models.CASCADE)  # type: ignore
 
     url_endpoint = models.SlugField(null=True, unique=True)
     profile_endpoint = models.SlugField(null=True, blank=True, unique=True)
     display_name = models.CharField(max_length=140, null=True, blank=True)
     summary = models.CharField(max_length=140, null=True, blank=True)
 
-    def clean_fields(self, exclude):
+    def save(self, *args, **kwargs):
         self.profile_endpoint = self.get_url_endpoint()
         self.url_endpoint = self.profile_endpoint
-        return super().clean_fields(exclude)
+        super().save(*args, **kwargs)  # Call the "real" save() method.
 
     @classmethod
     def get_get_safe_url(cls, user):

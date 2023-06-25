@@ -9,6 +9,8 @@ urlpatterns = [
     path("preview", views.PastePreview.as_view(), name="preview"),
     path("edit",
          views.ProfileUpdateView.as_view(), name="profile.edit"),
+    path("delete",
+         views.ProfileDeleteView.as_view(), name="profile.delete"),
     path('<slug:profile_endpoint>/', include([
         path("", views.ProfileDetailView.as_view(), name="profile"),
         path('<slug:paste_name>/', include([

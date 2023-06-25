@@ -15,4 +15,12 @@
       </a>
     </footer>
   </form>
+  <p>
+    <a href="{% url 'pastes:profile.delete' %}">
+      <button type="button">Delete Account and Pastes</button>
+    </a>
+    <aside>
+      (This will bring you to a confirmation page before deleting anything.)
+    </aside>
+  </p>
 {% endblock body %}
