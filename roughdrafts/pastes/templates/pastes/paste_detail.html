@@ -11,9 +11,15 @@
 {% endblock extra_header %}
 {% block nav %}
     {% nav %}
-    <li>
-        <a href="{% url 'pastes:update' paste.editor.profile.url_endpoint paste.url_endpoint %}">edit</a>
-    </li>
+    {% if request.user.is_authenticated and paste.editor == request.user %}
+        <li>
+            <a href="{% url 'pastes:update' paste.editor.profile.url_endpoint paste.url_endpoint %}">edit</a>
+        </li>
+    {% else %}
+        <li>
+            <a href="{% url 'pastes:markdown' paste.editor.profile.url_endpoint paste.url_endpoint %}">raw markdown</a>
+        </li>
+    {% endif %}
 {% endnav %}
 {% endblock nav %}
 {% block content %}

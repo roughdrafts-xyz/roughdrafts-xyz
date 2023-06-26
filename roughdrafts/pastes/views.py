@@ -44,6 +44,19 @@ class PasteDetailView(DetailView):
         raise PermissionDenied()
 
 
+class PasteMarkdownView(View):
+    model = Paste
+
+    def get(self, *args, **kwargs):
+        paste = get_paste(self, None)
+        res = HttpResponse(paste.content, content_type='text/plain')
+        if (paste.privacy in [Paste.Privacy.PUBLIC, Paste.Privacy.UNLISTED]):
+            return res
+        if (paste.editor == self.request.user):
+            return res
+        raise PermissionDenied()
+
+
 class PasteCreateView(LoginRequiredMixin, CreateView):
     model = Paste
     fields = Paste.editable_fields

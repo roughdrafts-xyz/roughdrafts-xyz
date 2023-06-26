@@ -15,6 +15,8 @@ urlpatterns = [
          views.DownloadDump.as_view(), name="profile.download"),
     path('<slug:profile_endpoint>/', include([
         path("", views.ProfileDetailView.as_view(), name="profile"),
+        path("<slug:paste_name>.md",
+             views.PasteMarkdownView.as_view(), name="markdown"),
         path('<slug:paste_name>/', include([
             path("", views.PasteDetailView.as_view(), name="detail"),
             path("edit",
