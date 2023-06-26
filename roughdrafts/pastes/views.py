@@ -1,3 +1,5 @@
+from datetime import datetime
+from io import BytesIO
 from typing import Any
 from django.conf import settings
 from django.contrib.auth import get_user_model, logout
@@ -12,6 +14,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic.detail import SingleObjectMixin
 from django.http import HttpRequest, HttpResponse
 from django import forms
+import zipfile
 
 from .models import Paste, Profile
 
@@ -153,3 +156,87 @@ class PastePreview(View):
         content = self.request.body
         render = Paste.preview_render(content)
         return HttpResponse(render)
+
+
+class DownloadDump(LoginRequiredMixin, View):
+    def get(self, *args, **kwargs):
+        output = BytesIO()
+        pastes = Paste.objects.filter(editor=self.request.user)
+        with zipfile.ZipFile(output, 'w') as zfile:
+            time = datetime.now().timetuple()
+            zfile.mkdir('markdown')
+            zfile.mkdir('html')
+            for paste in pastes:
+                markdown = '\n'.join([
+                    f"---",
+                    f"title: {paste.title}",
+                    f"summary: {paste.summary}",
+                    f"createdAt: {paste.created_at}",
+                    f"updatedAt: {paste.updated_at}",
+                    f"---"
+                    f"\n",
+                    f"{paste.content}"
+                ])
+                zfile.writestr(f'markdown/{paste.url_endpoint}.md', markdown)
+                html = '\n'.join([
+                    f"<!DOCTYPE html>",
+                    f"<html>",
+                    f"<head>",
+                    f"<title>{paste.title}</title>",
+                    f"<meta name='description' content='{paste.summary}'/>",
+                    f"<meta name='createdAt' content='{paste.created_at}'/>",
+                    f"<meta name='updatedAt' content='{paste.updated_at}'/>",
+                    f"</head>",
+                    f"<body>",
+                    f"<main>",
+                    f"<article>",
+                    f"{paste.rendered_content}",
+                    f"</article>",
+                    f"</main>"
+                    f"</body>",
+                    f"</html>"
+                ])
+                zfile.writestr(f'html/{paste.url_endpoint}.html', html)
+            zfile.close()
+
+        response = HttpResponse(
+            output.getvalue(), content_type='application/zip')
+        response['Content-Disposition'] = f"attachment; filename={self.request.user.profile.profile_endpoint}-{time.tm_year}-{time.tm_mon}-{time.tm_mday}.zip"
+        return response
+        """
+          const { id } = ctx.session.user
+  if (!id) throw new Error('Illegal Action')
+  const posts = await prisma.article.findMany({ where: { authorId: id } })
+  if (!posts) throw new Error('Illegal Action')
+  const zip = new JSZip()
+  const markdown = zip.folder('markdown')
+  const html = zip.folder('html')
+  posts.forEach(post => {
+    const markdownContents = [
+      '---',
+      `title: ${post.title}`,
+      `summary: ${post.summary}`,
+      `createdAt: ${post.createdAt}`,
+      `updatedAt: ${post.updatedAt}`,
+      '---',
+      '',
+      `${post.rawContent}`
+    ].join('\n')
+
+    const htmlContents = [
+    ].join('\n')
+
+    markdown.file(`${post.displayId}.md`, markdownContents)
+    html.file(`${post.displayId}.html`, htmlContents)
+  })
+  const base64 = await zip.generateAsync({ type: 'base64' })
+  const zipBuffer = Buffer.from(base64, 'base64')
+  return status(200)
+    .header({
+      'Content-Type': 'application/zip',
+      'Content-disposition': `attachment; filename=${ctx.session.user.displayId}_notes.zip`
+    })
+    .send(zipBuffer)
+}
+```
+        """

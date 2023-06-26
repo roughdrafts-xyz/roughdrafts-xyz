@@ -11,6 +11,8 @@ urlpatterns = [
          views.ProfileUpdateView.as_view(), name="profile.edit"),
     path("delete",
          views.ProfileDeleteView.as_view(), name="profile.delete"),
+    path("download",
+         views.DownloadDump.as_view(), name="profile.download"),
     path('<slug:profile_endpoint>/', include([
         path("", views.ProfileDetailView.as_view(), name="profile"),
         path('<slug:paste_name>/', include([
