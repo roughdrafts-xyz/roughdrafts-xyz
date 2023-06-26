@@ -1,4 +1,11 @@
 {% extends "pastes/base.html" %}
+{% block extra_head %}
+    <meta property="og:title" content="{{ paste.title }}" />
+    <meta property="og:type" content="website" />
+    {% if page.summary %}<meta property="og:description" content="{{ page.summary }}" />{% endif %}
+    <meta property="og:url" content="{{ request.build_absolute_uri }}" />
+    <meta property="og:site_name" content="Rough Drafts" />
+{% endblock extra_head %}
 {% load paste_nav %}
 {% block page_title %}
     {{ paste.title }}
