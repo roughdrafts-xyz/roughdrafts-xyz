@@ -1,10 +1,13 @@
 {% extends "pastes/base.html" %}
 {% load paste_nav %}
+{% block page_title %}
+  Updating User Settings
+{% endblock page_title %}
 {% block nav %}
   {% nav %}
 {% endnav %}
 {% endblock nav %}
-{% block body %}
+{% block content %}
   <form method="post">
     {% csrf_token %}
     {{ form.as_div }}
@@ -15,12 +18,30 @@
       </a>
     </footer>
   </form>
-  <p>
-    <a href="{% url 'pastes:profile.delete' %}">
-      <button type="button">Delete Account and Pastes</button>
-    </a>
-    <aside>
-      (This will bring you to a confirmation page before deleting anything.)
-    </aside>
-  </p>
-{% endblock body %}
+  <section>
+    <header>
+      <h2>Download Notes</h2>
+    </header>
+    <p>
+      <button type="button">Download Notes</button>
+      <aside>
+        (This will download a zip file of all your notes.)
+      </aside>
+    </p>
+  </section>
+  <section>
+    <header>
+      <h2>Account Management</h2>
+    </header>
+    {% block extra_user_settings %}
+    {% endblock extra_user_settings %}
+    <p>
+      <a href="{% url 'pastes:profile.delete' %}">
+        <button type="button">Delete Account and Pastes</button>
+      </a>
+      <aside>
+        (This will bring you to a confirmation page before deleting anything.)
+      </aside>
+    </p>
+  </section>
+{% endblock content %}
