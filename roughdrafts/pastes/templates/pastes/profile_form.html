@@ -23,7 +23,9 @@
       <h2>Download Notes</h2>
     </header>
     <p>
-      <button type="button">Download Notes</button>
+      <a href="{% url 'pastes:profile.download' %}">
+        <button type="button">Download Notes</button>
+      </a>
       <aside>
         (This will download a zip file of all your notes.)
       </aside>

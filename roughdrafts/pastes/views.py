@@ -201,42 +201,6 @@ class DownloadDump(LoginRequiredMixin, View):
 
         response = HttpResponse(
             output.getvalue(), content_type='application/zip')
-        response['Content-Disposition'] = f"attachment; filename={self.request.user.profile.profile_endpoint}-{time.tm_year}-{time.tm_mon}-{time.tm_mday}.zip"
+        f_name = self.request.user.profile.profile_endpoint  # type: ignore
+        response['Content-Disposition'] = f"attachment; filename={f_name}-{time.tm_year}-{time.tm_mon}-{time.tm_mday}.zip"
         return response
-        """
-          const { id } = ctx.session.user
-  if (!id) throw new Error('Illegal Action')
-  const posts = await prisma.article.findMany({ where: { authorId: id } })
-  if (!posts) throw new Error('Illegal Action')
-  const zip = new JSZip()
-  const markdown = zip.folder('markdown')
-  const html = zip.folder('html')
-  posts.forEach(post => {
-    const markdownContents = [
-      '---',
-      `title: ${post.title}`,
-      `summary: ${post.summary}`,
-      `createdAt: ${post.createdAt}`,
-      `updatedAt: ${post.updatedAt}`,
-      '---',
-      '',
-      `${post.rawContent}`
-    ].join('\n')
-
-    const htmlContents = [
-    ].join('\n')
-
-    markdown.file(`${post.displayId}.md`, markdownContents)
-    html.file(`${post.displayId}.html`, htmlContents)
-  })
-  const base64 = await zip.generateAsync({ type: 'base64' })
-  const zipBuffer = Buffer.from(base64, 'base64')
-  return status(200)
-    .header({
-      'Content-Type': 'application/zip',
-      'Content-disposition': `attachment; filename=${ctx.session.user.displayId}_notes.zip`
-    })
-    .send(zipBuffer)
-}
-```
-        """
