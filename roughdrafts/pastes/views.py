@@ -8,6 +8,7 @@ from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
+from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView, UpdateView, DeleteView, CreateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -49,7 +50,8 @@ class PasteMarkdownView(View):
 
     def get(self, *args, **kwargs):
         paste = get_paste(self, None)
-        res = HttpResponse(paste.content, content_type='text/plain')
+        res = HttpResponse(
+            paste.content, content_type='text/plain;charset=UTF-8')
         if (paste.privacy in [Paste.Privacy.PUBLIC, Paste.Privacy.UNLISTED]):
             return res
         if (paste.editor == self.request.user):
@@ -180,35 +182,11 @@ class DownloadDump(LoginRequiredMixin, View):
             zfile.mkdir('markdown')
             zfile.mkdir('html')
             for paste in pastes:
-                markdown = '\n'.join([
-                    f"---",
-                    f"title: {paste.title}",
-                    f"summary: {paste.summary}",
-                    f"createdAt: {paste.created_at}",
-                    f"updatedAt: {paste.updated_at}",
-                    f"---"
-                    f"\n",
-                    f"{paste.content}"
-                ])
+                markdown = render_to_string(
+                    "pastes/zip_markdown.txt", {"paste": paste})
                 zfile.writestr(f'markdown/{paste.url_endpoint}.md', markdown)
-                html = '\n'.join([
-                    f"<!DOCTYPE html>",
-                    f"<html>",
-                    f"<head>",
-                    f"<title>{paste.title}</title>",
-                    f"<meta name='description' content='{paste.summary}'/>",
-                    f"<meta name='createdAt' content='{paste.created_at}'/>",
-                    f"<meta name='updatedAt' content='{paste.updated_at}'/>",
-                    f"</head>",
-                    f"<body>",
-                    f"<main>",
-                    f"<article>",
-                    f"{paste.rendered_content}",
-                    f"</article>",
-                    f"</main>"
-                    f"</body>",
-                    f"</html>"
-                ])
+                html = render_to_string(
+                    "pastes/zip_html.html", {"paste": paste})
                 zfile.writestr(f'html/{paste.url_endpoint}.html', html)
             zfile.close()
 

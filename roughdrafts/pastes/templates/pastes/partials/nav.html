@@ -1,18 +1,15 @@
-{% if request.user.is_authenticated %}
-    <ul>
-        <li>
-            <a href="{% url 'pastes:list' %}">home</a>
-        </li>
-        {{ extra_nav }}
+<ul>
+    <li>
+        <a href="{% url 'pastes:list' %}">home</a>
+    </li>
+    {{ extra_nav }}
+    {% if request.user.is_authenticated %}
         <li>
             <a href="{% url 'account_logout' %}">logout</a>
         </li>
-    </ul>
-{% else %}
-    <ul>
+    {% else %}
         <li>
             <a href="{% url 'account_login' %}">login</a>
         </li>
-        {{ extra_nav }}
-    </ul>
-{% endif %}
+    {% endif %}
+</ul>
