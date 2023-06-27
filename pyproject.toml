@@ -11,6 +11,7 @@ python = "^3.11"
 Django = "^4.2.2"
 pypandoc = "^1.11"
 nh3 = "^0.2.13"
+django-allauth = "^0.54.0"
 
 
 [build-system]
