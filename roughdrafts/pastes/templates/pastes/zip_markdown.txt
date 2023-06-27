@@ -1,9 +1,0 @@
----
-title: | {{ paste.title }}
-description: {{ paste.summary }}
-created: {{ paste.created_at }}
-modified: {{ paste.updated_at }}
-author: {{paste.editor}}
----
-
-{{paste.content}}
