@@ -1,1 +1,9 @@
 {% extends 'roughdrafts/base.html' %}
+{% load paste_nav %}
+{% block nav %}
+    {% nav %}
+    <li>
+        <a href="{% url 'pastes:profile.edit' %}">cancel</a>
+    </li>
+{% endnav %}
+{% endblock nav %}
