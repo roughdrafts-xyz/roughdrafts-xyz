@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -19,13 +20,43 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-b1no_9(10%*=rano*xxtc-)v1#_$k1zp%bg@5h5%+%7zu8_6w3'
-
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+env = os.getenv("ENV", "DEBUG")
 
-ALLOWED_HOSTS = []
+match env:
+    case "PROD":
+        DEBUG = False
+        SECURE_SSL_REDIRECT = True
+        SESSION_COOKIE_SECURE = True
+        CSRF_COOKIE_SECURE = True
+        SECRET_KEY = os.getenv("SECRET_KEY")
+        DISCORD_SECRET = os.getenv("DISCORD_SECRET")
+        DISCORD_CLIENT_ID = os.getenv("DISCORD_CLIENT_ID")
+        HOSTNAME = os.getenv("HOSTNAME")
+        if None in [SECRET_KEY, DISCORD_SECRET, DISCORD_CLIENT_ID, HOSTNAME]:
+            raise ValueError(
+                "Production needs a hostname, secret key, discord secret, and discord client id in its env variables.")
+        SOCIALACCOUNT_PROVIDERS = {
+            'discord': {
+                'APP': {
+                    'client_id': DISCORD_CLIENT_ID,
+                    'secret': DISCORD_SECRET,
+                },
+            }
+        }
+        ALLOWED_HOSTS = [
+            HOSTNAME
+        ]
+    case "DEBUG":
+        DEBUG = True
+        # SECURITY WARNING: keep the secret key used in production secret!
+        SECRET_KEY = 'django-insecure-b1no_9(10%*=rano*xxtc-)v1#_$k1zp%bg@5h5%+%7zu8_6w3'
+        ALLOWED_HOSTS = []
+
+
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/home/'
+
 
 AUTHENTICATION_BACKENDS = [
     # Needed to login by username in Django admin, regardless of `allauth`
@@ -139,16 +170,3 @@ STATICFILES_DIRS = ['roughdrafts/static']
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/home/'
-
-
-SOCIALACCOUNT_PROVIDERS = {
-    'discord': {
-        'APP': {
-            'client_id': 'xxx',
-            'secret': 'xxx',
-        },
-    }
-}
