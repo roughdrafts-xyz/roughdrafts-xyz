@@ -1,0 +1,37 @@
+{% extends "pastes/base.html" %}
+{% load paste_nav %}
+{% block nav %}
+  {% nav %}
+  <li>
+    <a href="{% url "pastes:create" %}">create new paste</a>
+  </li>
+  <li>
+    <a href="{% url "pastes:profile.edit" %}">update profile</a>
+  </li>
+{% endnav %}
+{% endblock nav %}
+{% block page_title %}
+  {{ profile.profile_name }}
+{% endblock page_title %}
+{% block content %}
+  {% if profile.pastes %}
+    {% for paste in profile.pastes %}
+      <section>
+        <a href="{% url 'pastes:detail' profile.url_endpoint paste.url_endpoint %}">
+          <h3>{{ paste.title }}</h3>
+        </a>
+        <p>
+          {% if paste.summary %}
+            {{ paste.summary }}
+          {% else %}
+            {{ paste.content|truncatechars:140 }}
+          {% endif %}
+        </p>
+      </section>
+    {% endfor %}
+  {% else %}
+    <section>
+      No pastes are available.
+    </section>
+  {% endif %}
+{% endblock content %}
