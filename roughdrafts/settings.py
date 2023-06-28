@@ -29,29 +29,60 @@ match env:
         SECURE_SSL_REDIRECT = True
         SESSION_COOKIE_SECURE = True
         CSRF_COOKIE_SECURE = True
-        SECRET_KEY = os.getenv("SECRET_KEY")
-        DISCORD_SECRET = os.getenv("DISCORD_SECRET")
-        DISCORD_CLIENT_ID = os.getenv("DISCORD_CLIENT_ID")
-        HOSTNAME = os.getenv("HOSTNAME")
-        if None in [SECRET_KEY, DISCORD_SECRET, DISCORD_CLIENT_ID, HOSTNAME]:
-            raise ValueError(
-                "Production needs a hostname, secret key, discord secret, and discord client id in its env variables.")
+        props = {
+            "SECRET_KEY": os.getenv("SECRET_KEY"),
+            "DISCORD_SECRET": os.getenv("DISCORD_SECRET"),
+            "DISCORD_CLIENT_ID": os.getenv("DISCORD_CLIENT_ID"),
+            "HOSTNAME": os.getenv("HOSTNAME"),
+            "DB_NAME": os.getenv("DB_NAME"),
+            "DB_USER": os.getenv("DB_USER"),
+            "DB_PASS": os.getenv("DB_PASS"),
+            "DB_HOST": os.getenv("DB_HOST"),
+            "DB_PORT": os.getenv("DB_PORT"),
+        }
+        missing = [k for k, v in props.items() if v is None]
+        if len(missing) > 0:
+            raise ValueError('Missing props:\n'+'\n'.join(missing))
+        SECRET_KEY = props['SECRET_KEY']
         SOCIALACCOUNT_PROVIDERS = {
             'discord': {
                 'APP': {
-                    'client_id': DISCORD_CLIENT_ID,
-                    'secret': DISCORD_SECRET,
+                    'client_id': props['DISCORD_CLIENT_ID'],
+                    'secret': props['DISCORD_SECRET'],
                 },
             }
         }
         ALLOWED_HOSTS = [
-            HOSTNAME
+            props['HOSTNAME']
         ]
+        # Database
+        # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+
+        DATABASES = {
+            "default": {
+                "ENGINE": "django.db.backends.postgresql",
+                "NAME": props['DB_NAME'],
+                "USER": props['DB_USER'],
+                "PASSWORD": props['DB_PASS'],
+                "HOST": props['DB_HOST'],
+                "PORT": props['DB_PORT'],
+            }
+        }
+
     case "DEBUG":
         DEBUG = True
         # SECURITY WARNING: keep the secret key used in production secret!
         SECRET_KEY = 'django-insecure-b1no_9(10%*=rano*xxtc-)v1#_$k1zp%bg@5h5%+%7zu8_6w3'
         ALLOWED_HOSTS = []
+        # Database
+        # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
 
 
 LOGIN_REDIRECT_URL = '/'
@@ -116,17 +147,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'roughdrafts.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
 
 
 # Password validation
