@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "roughdrafts"
+version = "0.1.0"
+description = "a markdown upload website"
+authors = ["Your Name <you@example.com>"]
+license = "GPL-3.0 license"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+Django = "^4.2.2"
+pypandoc = "^1.11"
+nh3 = "^0.2.13"
+django-allauth = "^0.54.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
