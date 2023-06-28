@@ -34,11 +34,11 @@ match env:
             "DISCORD_SECRET": os.getenv("DISCORD_SECRET"),
             "DISCORD_CLIENT_ID": os.getenv("DISCORD_CLIENT_ID"),
             "HOSTNAME": os.getenv("HOSTNAME"),
-            "DB_NAME": os.getenv("DB_NAME"),
-            "DB_USER": os.getenv("DB_USER"),
-            "DB_PASS": os.getenv("DB_PASS"),
-            "DB_HOST": os.getenv("DB_HOST"),
-            "DB_PORT": os.getenv("DB_PORT"),
+            # "DB_NAME": os.getenv("DB_NAME"),
+            # "DB_USER": os.getenv("DB_USER"),
+            # "DB_PASS": os.getenv("DB_PASS"),
+            # "DB_HOST": os.getenv("DB_HOST"),
+            # "DB_PORT": os.getenv("DB_PORT"),
         }
         missing = [k for k, v in props.items() if v is None]
         if len(missing) > 0:
@@ -59,6 +59,13 @@ match env:
         # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
         DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
+        """
+        DATABASES = {
             "default": {
                 "ENGINE": "django.db.backends.postgresql",
                 "NAME": props['DB_NAME'],
@@ -68,6 +75,7 @@ match env:
                 "PORT": props['DB_PORT'],
             }
         }
+        """
 
     case "DEBUG":
         DEBUG = True
