@@ -52,6 +52,7 @@ match env:
                 },
             }
         }
+
         ALLOWED_HOSTS = [
             props['HOSTNAME']
         ]
@@ -89,6 +90,15 @@ match env:
             'default': {
                 'ENGINE': 'django.db.backends.sqlite3',
                 'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
+
+        SOCIALACCOUNT_PROVIDERS = {
+            'discord': {
+                'APP': {
+                    'client_id': "xxx",
+                    'secret': "xxx",
+                },
             }
         }
 

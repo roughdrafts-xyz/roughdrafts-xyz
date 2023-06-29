@@ -13,6 +13,9 @@
 {% block page_title %}
   {{ profile.profile_name }}
 {% endblock page_title %}
+{% block extra_header %}
+  <p>{{ profile.summary }}</p>
+{% endblock extra_header %}
 {% block content %}
   {% if profile.pastes %}
     {% for paste in profile.pastes %}
