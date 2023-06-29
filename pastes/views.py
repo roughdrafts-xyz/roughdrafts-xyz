@@ -127,7 +127,10 @@ class ProfileDetailView(DetailView):
                 return None
             profile = get_object_or_404(
                 Profile, user=self.request.user)
-        pastes = Paste.objects.filter(editor=profile.user)
+        if profile.user == self.request.user:
+            pastes = Paste.objects.filter(editor=profile.user)
+        else:
+            pastes = Paste.objects.filter(editor=profile.user, privacy=2)
         profile.pastes = pastes  # type:ignore
         return profile
 

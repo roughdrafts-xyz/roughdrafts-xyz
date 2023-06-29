@@ -53,7 +53,13 @@ class Paste(models.Model):
 
     @staticmethod
     def preview_render(content):
-        return clean(convert_text(content, 'html', format='gfm'))
+        # this is dumb but its to prevent trying to render yaml
+        # TODO could be fixed by using a different markdown renderer
+        # pypandoc is currently being used because its what linki uses
+        # and at the time of writing I want compatibility between this and that.
+        from_f = 'markdown_github-pandoc_title_block'
+        html = convert_text(content, 'html', format=from_f)
+        return clean(html)
 
     def __str__(self) -> str:
         return self.summary or self.content[:140]
