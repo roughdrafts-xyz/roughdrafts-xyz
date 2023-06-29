@@ -10,6 +10,7 @@ from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
+from django.utils.text import slugify
 from django.views.generic import DetailView, ListView, UpdateView, DeleteView, CreateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic.detail import SingleObjectMixin
@@ -70,9 +71,9 @@ class PasteCreateView(LoginRequiredMixin, CreateView):
 
 def get_paste(self, queryset=None):
     profile = get_object_or_404(
-        Profile, profile_endpoint=self.kwargs["profile_endpoint"])
+        Profile, profile_endpoint=slugify(self.kwargs["profile_endpoint"]))
     paste = get_object_or_404(
-        Paste, url_endpoint=self.kwargs["paste_name"], editor=profile.user)
+        Paste, url_endpoint=slugify(self.kwargs["paste_name"]), editor=profile.user)
     return paste
 
 
