@@ -2,10 +2,9 @@
 {% load paste_nav %}
 {% load static %}
 {% block extra_head %}
-  <link rel="stylesheet"
-        href="https://unpkg.com/easymde/dist/easymde.min.css" />
+  <link rel="stylesheet" href="{% static 'pastes/easymde.min.css' %}" />
   <link rel="stylesheet" href="{% static 'pastes/dark_easy_mde.css' %}" />
-  <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
+  <script src="{% static 'pastes/easymde.min.js' %}"></script>
 {% endblock extra_head %}
 {% block nav %}
   {% nav %}
