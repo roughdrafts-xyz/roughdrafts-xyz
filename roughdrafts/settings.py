@@ -208,3 +208,6 @@ STATICFILES_DIRS = ['roughdrafts/static']
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+HOSTNAME=os.environ.get('HOSTNAME', 'localhost')
+DEFAULT_FROM_EMAIL=f"noreply@{HOSTNAME}"
+SERVER_EMAIL=f"admin@{HOSTNAME}"
