@@ -1,0 +1,50 @@
+{% extends "linkis/base.html" %}
+{% load linki_nav %}
+{% block page_title %}
+  Updating User Settings
+{% endblock page_title %}
+{% block nav %}
+  {% nav %}
+{% endnav %}
+{% endblock nav %}
+{% block content %}
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_div }}
+    <footer>
+      <button type="submit" name="action">Save Profile</button>
+      <a href="{% url 'linkis:profile' profile.url_endpoint %}">
+        <button type="button">Cancel</button>
+      </a>
+    </footer>
+  </form>
+  <section>
+    <header>
+      <h2>Download Notes</h2>
+    </header>
+    <p>
+      <a href="{% url 'linkis:profile.download' %}">
+        <button type="button">Download Notes</button>
+      </a>
+      <aside>
+        (This will download a zip file of all your notes.)
+      </aside>
+    </p>
+  </section>
+  <section>
+    <header>
+      <h2>Account Management</h2>
+    </header>
+    {% block extra_user_settings %}
+    {% endblock extra_user_settings %}
+    <hr />
+    <p>
+      <a href="{% url 'linkis:profile.delete' %}">
+        <button type="button">Delete Account and Linkis</button>
+      </a>
+      <aside>
+        (This will bring you to a confirmation page before deleting anything.)
+      </aside>
+    </p>
+  </section>
+{% endblock content %}

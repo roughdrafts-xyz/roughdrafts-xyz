@@ -1,0 +1,38 @@
+{% extends "linkis/base.html" %}
+{% load linki_nav %}
+{% block page_title %}
+  Deleting Your Account
+{% endblock page_title %}
+{% block extra_header %}
+{% endblock extra_header %}
+{% block nav %}
+  {% nav %}
+  <li>
+    <a href="{% url 'linkis:profile.edit' %}">cancel</a>
+  </li>
+{% endnav %}
+{% endblock nav %}
+{% block content %}
+  <form method="post">
+    {% csrf_token %}
+    {{ form.expected_endpoint }}
+    {{ form.non_field_errors }}
+    <div>
+      <label>
+        <div>
+          <p>
+            please enter <strong>{{ profile.url_endpoint }}</strong> to confirm:
+          </p>
+          {{ form.url_endpoint.errors }}
+        </div>
+        {{ form.url_endpoint }}
+      </label>
+    </div>
+    <footer>
+      <button type="submit" name="action">Delete</button>
+      <a href="{% url 'linkis:profile.edit' %}">
+        <button type="button">Cancel</button>
+      </a>
+    </footer>
+  </form>
+{% endblock content %}

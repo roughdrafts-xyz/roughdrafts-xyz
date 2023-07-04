@@ -1,0 +1,9 @@
+---
+title: | {{ linki.title }}
+description: {{ linki.summary }}
+created: {{ linki.created_at }}
+modified: {{ linki.updated_at }}
+author: {{linki.editor}}
+---
+
+{{linki.content}}

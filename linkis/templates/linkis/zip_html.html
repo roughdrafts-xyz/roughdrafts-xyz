@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{{ linki.title }}</title>
+        <meta name="description" content="{{ linki.summary }}" />
+        <meta name="keywords" content="{{ linki.summary }}" />
+        <meta name="author" content="{{ linki.editor }}" />
+        <meta name="created" content="{{ linki.created_at }}" />
+        <meta name="updated" content="{{ linki.updated_at }}" />
+    </head>
+    <body>
+        <main>
+            <article>
+                {% autoescape off %}
+                    {{ linki.rendered_content }}
+                {% endautoescape %}
+            </article>
+        </main>
+    </body>
+</html>

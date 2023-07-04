@@ -1,0 +1,40 @@
+{% extends "linkis/base.html" %}
+{% load linki_nav %}
+{% block nav %}
+  {% nav %}
+  <li>
+    <a href="{% url "linkis:create" %}">create new linki</a>
+  </li>
+  <li>
+    <a href="{% url "linkis:profile.edit" %}">update profile</a>
+  </li>
+{% endnav %}
+{% endblock nav %}
+{% block page_title %}
+  {{ profile.profile_name }}
+{% endblock page_title %}
+{% block extra_header %}
+  <p>{{ profile.summary }}</p>
+{% endblock extra_header %}
+{% block content %}
+  {% if profile.linkis %}
+    {% for linki in profile.linkis %}
+      <section>
+        <a href="{% url 'linkis:detail' profile.url_endpoint linki.url_endpoint %}">
+          <h3>{{ linki.title }}</h3>
+        </a>
+        <p>
+          {% if linki.summary %}
+            {{ linki.summary }}
+          {% else %}
+            {{ linki.content|truncatechars:140 }}
+          {% endif %}
+        </p>
+      </section>
+    {% endfor %}
+  {% else %}
+    <section>
+      No linkis are available.
+    </section>
+  {% endif %}
+{% endblock content %}

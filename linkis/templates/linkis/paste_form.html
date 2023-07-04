@@ -1,0 +1,57 @@
+{% extends "linkis/base.html" %}
+{% load linki_nav %}
+{% load static %}
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'linkis/easymde.min.css' %}" />
+  <link rel="stylesheet" href="{% static 'linkis/dark_easy_mde.css' %}" />
+  <script src="{% static 'linkis/easymde.min.js' %}"></script>
+{% endblock extra_head %}
+{% block nav %}
+  {% nav %}
+  {% if linki %}
+    <li>
+      <a href="{% url 'linkis:delete' linki.editor.profile.url_endpoint linki.url_endpoint %}">delete</a>
+    </li>
+    <li>
+      <a href="{% url 'linkis:detail' linki.editor.profile.url_endpoint linki.url_endpoint %}">cancel</a>
+    </li>
+  {% endif %}
+{% endnav %}
+{% endblock nav %}
+{% block body %}
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_div }}
+    <footer>
+      <button type="submit" name="action">Linki it!</button>
+      {% if linki %}
+        <a href="{% url 'linkis:detail' linki.editor.profile.url_endpoint linki.url_endpoint %}">
+          <button type="button">Cancel</button>
+        </a>
+      {% endif %}
+    </footer>
+  </form>
+  <script>
+      const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+      const easyMDE = new EasyMDE({
+          autofocus: true,
+          forceSync: true,
+          element: document.getElementById('id_content'),
+          previewRender: (plainText, preview) => {
+              fetch("{% url 'linkis:preview' %}", {
+                      method: "POST",
+                      body: plainText,
+                      headers: {
+                          'X-CSRFToken': csrftoken
+                      },
+                      mode: 'same-origin' // Do not send CSRF token to another domain.
+                  })
+                  .then((res) => res.text())
+                  .then((text) => {
+                      preview.innerHTML = text
+                  });
+          },
+
+      });
+  </script>
+{% endblock body %}

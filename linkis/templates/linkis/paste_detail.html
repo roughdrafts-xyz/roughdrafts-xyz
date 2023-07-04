@@ -1,0 +1,36 @@
+{% extends "linkis/base.html" %}
+{% block extra_head %}
+    <meta property="og:title" content="{{ linki.title }}" />
+    <meta property="og:type" content="website" />
+    {% if page.summary %}<meta property="og:description" content="{{ page.summary }}" />{% endif %}
+    <meta property="og:url" content="{{ request.build_absolute_uri }}" />
+    <meta property="og:site_name" content="Rough Drafts" />
+{% endblock extra_head %}
+{% load linki_nav %}
+{% block page_title %}
+    {{ linki.title }}
+{% endblock page_title %}
+{% block extra_header %}
+    <p>{{ linki.summary }}</p>
+    <p>
+        by <a href="{% url 'linkis:profile' linki.editor.profile.url_endpoint %}">{{ linki.editor.profile.profile_name }}</a>
+    </p>
+{% endblock extra_header %}
+{% block nav %}
+    {% nav %}
+    {% if linki.editor == request.user %}
+        <li>
+            <a href="{% url 'linkis:update' linki.editor.profile.url_endpoint linki.url_endpoint %}">edit</a>
+        </li>
+    {% else %}
+        <li>
+            <a href="{% url 'linkis:markdown' linki.editor.profile.url_endpoint linki.url_endpoint %}">view source</a>
+        </li>
+    {% endif %}
+{% endnav %}
+{% endblock nav %}
+{% block content %}
+    {% autoescape off %}
+        {{ linki.rendered_content }}
+    {% endautoescape %}
+{% endblock content %}
