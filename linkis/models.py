@@ -1,10 +1,12 @@
-from typing import Type
+from collections.abc import Callable
+from json import JSONDecoder, JSONEncoder
+from typing import Any, Type
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.text import slugify
 from linki.article import BaseArticle as LinkiArticle
 
-from msgspec import Struct
+from msgspec import Struct, to_builtins, json
 from pypandoc import convert_text
 from nh3 import clean
 from msgspec import convert
@@ -56,22 +58,39 @@ class Profile(models.Model):
         return self.user.username
 
 
+class StructEncoder(JSONEncoder):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.msgspec_encoder = json.Encoder()
+
+    def encode(self, o: Struct) -> str:
+        return self.msgspec_encoder.encode(o).decode()
+
+
+class StructDecoder(JSONDecoder):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.msgspec_decoder = json.Decoder()
+
+    def decode(self, s: str, _w: Callable[..., Any] = ...) -> Any:
+        return self.msgspec_decoder.decode(s)
+
+
 class LinkiModel(models.Model):
     label_id = models.CharField(
         max_length=56, default='00000000000000000000000000000000000000000000000000000000',
         primary_key=True)
-    data = models.JSONField(default=dict)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    linkiStruct: Type[Struct] | None = None
+    data = models.JSONField(
+        default=dict, encoder=StructEncoder, decoder=StructDecoder)
 
     editable_fields = ['data']
+    linki_type: Type[Struct]
 
-    def unload(self):
-        if (self.linkiStruct is None):
-            raise NotImplementedError
-        return convert(self.data, type=self.linkiStruct)
+    def as_linki_type(self):
+        return convert(self.data, type=self.linki_type)
 
     def __str__(self) -> str:
         return self.label_id
@@ -93,8 +112,9 @@ class HasPrivacy(models.Model):
         abstract = True
 
 
-class BaseArticle(LinkiModel, HasPrivacy):
+class Article(LinkiModel, HasPrivacy):
     rendered_content = models.TextField()
+    linki_type = LinkiArticle
 
     @staticmethod
     def preview_render(content):
@@ -105,11 +125,3 @@ class BaseArticle(LinkiModel, HasPrivacy):
         from_f = 'markdown_github-pandoc_title_block'
         html = convert_text(content, 'html', format=from_f)
         return clean(html)
-
-    class Meta:
-        abstract = True
-
-
-class Article(BaseArticle):
-    linkiStruct = LinkiArticle
-    pass

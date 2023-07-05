@@ -35,11 +35,11 @@ class DjangoConnection(Connection[Struct]):
     def __setitem__(self, __key: ID, __value: Struct) -> None:
         if (self.user is None):
             return None
-        val = to_builtins(__value)
+            to_builtins()
         self.store.update_or_create({
             "label_id": __key,
             "user": self.user,
-            "data": val
+            "data": __value
         })
 
     def __delitem__(self, __key: ID) -> None:
@@ -48,8 +48,7 @@ class DjangoConnection(Connection[Struct]):
 
     def __getitem__(self, __key: ID) -> Struct:
         val: models.LinkiModel = get_object_or_404(self.store, label_id=__key)
-        res: Struct = val.unload()
-        return res
+        return val.as_linki_type()
 
     def __iter__(self) -> Iterator[ID]:
         for x in self.store.values_list('pk', flat=True).iterator():
