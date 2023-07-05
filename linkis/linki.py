@@ -1,13 +1,12 @@
 from typing import Iterator
 from django.contrib.auth.models import User
-from django.http import response
 from django.shortcuts import get_object_or_404
 from linki.connection import Connection
 from linki.editor import Editor
 from linki.repository import Repository, MemoryRepoConnection
 from . import models
 from django.db.models import Manager as DjangoManager
-from msgspec import Struct, to_builtins
+from msgspec import Struct
 from linki.id import ID
 
 
@@ -35,7 +34,6 @@ class DjangoConnection(Connection[Struct]):
     def __setitem__(self, __key: ID, __value: Struct) -> None:
         if (self.user is None):
             return None
-            to_builtins()
         self.store.update_or_create({
             "label_id": __key,
             "user": self.user,
