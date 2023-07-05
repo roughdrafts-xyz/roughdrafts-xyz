@@ -119,7 +119,6 @@ AUTHENTICATION_BACKENDS = [
 # Application definition
 
 INSTALLED_APPS = [
-    'pastes.apps.PastesConfig',
     'linkis.apps.LinkisConfig',
     'django.contrib.admin',
     'django.contrib.auth',

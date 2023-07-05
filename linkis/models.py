@@ -1,68 +1,13 @@
-from collections.abc import Collection, Iterable
+from typing import Type
 from django.db import models
-from django.urls import reverse
 from django.contrib.auth.models import User
 from django.utils.text import slugify
+from linki.article import BaseArticle as LinkiArticle
+
+from msgspec import Struct
 from pypandoc import convert_text
 from nh3 import clean
-
-
-class Linki(models.Model):
-    class Privacy(models.IntegerChoices):
-        PRIVATE = 0
-        UNLISTED = 1
-        PUBLIC = 2
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                "editor", "url_endpoint", name="editor_linki_url_endpoint")
-        ]
-
-    editable_fields = ["title", "summary",
-                       "url_endpoint", "privacy", "content"]
-    summary = models.CharField(max_length=140, blank=True)
-    url_endpoint = models.SlugField(blank=True)
-    privacy = models.IntegerField(
-        choices=Privacy.choices, default=Privacy.UNLISTED)
-
-    title = models.CharField(max_length=140)
-    content = models.TextField()
-    rendered_content = models.TextField()
-
-    editor = models.ForeignKey(User, on_delete=models.CASCADE)
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def clean_fields(self, exclude) -> None:
-        if not self.url_endpoint:
-            self.url_endpoint = slugify(self.title)
-        return super().clean_fields(exclude)
-
-    def save(self, *args, **kwargs):
-        self.rendered_content = self.preview_render(self.content)
-        super().save(*args, **kwargs)  # Call the "real" save() method.
-
-    def get_absolute_url(self):
-        profile_endpoint = self.editor.profile.profile_endpoint  # type: ignore
-        return reverse("linkis:detail", kwargs={
-            "profile_endpoint": profile_endpoint,
-            "linki_name": self.url_endpoint
-        })
-
-    @staticmethod
-    def preview_render(content):
-        # this is dumb but its to prevent trying to render yaml
-        # TODO could be fixed by using a different markdown renderer
-        # pypandoc is currently being used because its what linki uses
-        # and at the time of writing I want compatibility between this and that.
-        from_f = 'markdown_github-pandoc_title_block'
-        html = convert_text(content, 'html', format=from_f)
-        return clean(html)
-
-    def __str__(self) -> str:
-        return self.summary or self.content[:140]
+from msgspec import convert
 
 
 class Profile(models.Model):
@@ -107,8 +52,64 @@ class Profile(models.Model):
             return self.display_name
         return self.user.username
 
-    def get_absolute_url(self):
-        return reverse("linkis:profile", kwargs={"profile_endpoint": self.url_endpoint})
-
     def __str__(self) -> str:
         return self.user.username
+
+
+class LinkiModel(models.Model):
+    label_id = models.CharField(
+        max_length=56, default='00000000000000000000000000000000000000000000000000000000',
+        primary_key=True)
+    data = models.JSONField(default=dict)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    linkiStruct: Type[Struct] | None = None
+
+    editable_fields = ['data']
+
+    def unload(self):
+        if (self.linkiStruct is None):
+            raise NotImplementedError
+        return convert(self.data, type=self.linkiStruct)
+
+    def __str__(self) -> str:
+        return self.label_id
+
+    class Meta:
+        abstract = True
+
+
+class HasPrivacy(models.Model):
+    class Privacy(models.IntegerChoices):
+        PRIVATE = 0
+        UNLISTED = 1
+        PUBLIC = 2
+
+    privacy = models.IntegerField(
+        choices=Privacy.choices, default=Privacy.UNLISTED)
+
+    class Meta:
+        abstract = True
+
+
+class BaseArticle(LinkiModel, HasPrivacy):
+    rendered_content = models.TextField()
+
+    @staticmethod
+    def preview_render(content):
+        # this is dumb but its to prevent trying to render yaml
+        # TODO could be fixed by using a different markdown renderer
+        # pypandoc is currently being used because its what linki uses
+        # and at the time of writing I want compatibility between this and that.
+        from_f = 'markdown_github-pandoc_title_block'
+        html = convert_text(content, 'html', format=from_f)
+        return clean(html)
+
+    class Meta:
+        abstract = True
+
+
+class Article(BaseArticle):
+    linkiStruct = LinkiArticle
+    pass

@@ -1,4 +1,4 @@
 from django.contrib import admin
-from .models import Linki, Profile
+from .models import Article, Profile
 
-admin.site.register([Linki, Profile])
+admin.site.register([Article, Profile])

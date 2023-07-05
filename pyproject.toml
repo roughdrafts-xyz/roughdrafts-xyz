@@ -13,6 +13,7 @@ pypandoc = "^1.11"
 nh3 = "^0.2.13"
 django-allauth = "^0.54.0"
 linki = "^0.0.15"
+msgspec = "^0.16.0"
 
 [tool.poetry.group.dev.dependencies]
 djlint = "^1.31.1"
