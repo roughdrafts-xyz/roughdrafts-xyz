@@ -76,13 +76,19 @@ class StructDecoder(JSONDecoder):
         return self.msgspec_decoder.decode(s)
 
 
-class LinkiModel(models.Model):
-    label_id = models.CharField(
-        max_length=56, default='00000000000000000000000000000000000000000000000000000000',
-        primary_key=True)
+class HasUser(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        abstract = True
+
+
+class LinkiModel(HasUser, models.Model):
+    label_id = models.CharField(
+        max_length=56, default='00000000000000000000000000000000000000000000000000000000',
+        primary_key=True)
     data = models.JSONField(
         default=dict, encoder=StructEncoder, decoder=StructDecoder)
 
@@ -116,6 +122,10 @@ class Article(LinkiModel, HasPrivacy):
     rendered_content = models.TextField()
     linki_type = LinkiArticle
 
+    def save(self, *args, **kwargs):
+        self.rendered_content = self.preview_render(self.data.content)
+        super().save(*args, **kwargs)  # Call the "real" save() method.
+
     @staticmethod
     def preview_render(content):
         # this is dumb but its to prevent trying to render yaml
@@ -125,3 +135,7 @@ class Article(LinkiModel, HasPrivacy):
         from_f = 'markdown_github-pandoc_title_block'
         html = convert_text(content, 'html', format=from_f)
         return clean(html)
+
+
+class Linki(HasPrivacy, HasUser, models.Model):
+    pass

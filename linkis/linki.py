@@ -27,7 +27,7 @@ class DjangoEditor(Editor):
 
 
 class DjangoConnection(Connection[Struct]):
-    def __init__(self, manager: DjangoManager, user: User | None = None) -> None:
+    def __init__(self, manager: DjangoManager, user: User) -> None:
         self.store = manager
         self.user = user
 
@@ -67,8 +67,7 @@ class DjangoRepositoryConnection(MemoryRepoConnection):
         # 'config': models.Config
     }
 
-    def get_style(self, style: str, user: User | None = None) -> DjangoConnection:
+    def get_style(self, style: str, user: User) -> DjangoConnection:
         model: DjangoManager = self.styles[style]  # type: ignore
-        if (user is not None):
-            model = model.filter(user=user)
+        model = model.filter(user=user)
         return DjangoConnection(model, user)
