@@ -1,0 +1,9 @@
+{% extends "linkis/base.html" %}
+{% load linki_nav %}
+{% load static %}
+{% block body %}
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_div }}
+  </form>
+{% endblock body %}

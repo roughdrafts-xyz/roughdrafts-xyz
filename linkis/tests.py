@@ -6,11 +6,8 @@ from .models import Article as DjangoArticle
 from linki.article import Article as LinkiArticle
 from linki.id import SimpleLabel
 from .linki import DjangoConnection
-from django.test import TestCase
+from django.test import TestCase, Client
 from django.contrib.auth.models import User
-
-
-# Create your tests here.
 
 
 class DjangoConnectionTest(TestCase):
@@ -47,3 +44,16 @@ class DjangoConnectionTest(TestCase):
         self.assertRaises(Http404, del_article)
         self.assertRaises(Http404, has_article)
         self.assertEqual(len(self.connection), 0)
+
+
+class LinkiPathTest(TestCase):
+    def setUp(self) -> None:
+        self.user = User.objects.create_user(
+            'test', 'test@example.com', 'password')
+        self.client: Client = Client(SERVER_NAME='localhost')
+        self.client.login(username='test', password='password')
+
+    def test_make_new(self):
+        # it should make it and redirect you to it.
+        res = self.client.post('/new', {'name': 'test-linki'})
+        self.assertRedirects(res, f"/{self.user.username}/test-linki")

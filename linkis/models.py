@@ -1,9 +1,10 @@
 from collections.abc import Callable
 from json import JSONDecoder, JSONEncoder
-from typing import Any, Type
+from typing import Any, Iterable, Optional, Type
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.text import slugify
+from django.urls import reverse
 from linki.article import BaseArticle as LinkiArticle
 
 from msgspec import Struct, to_builtins, json
@@ -89,6 +90,7 @@ class LinkiModel(HasUser, models.Model):
     label_id = models.CharField(
         max_length=56, default='00000000000000000000000000000000000000000000000000000000',
         primary_key=True)
+
     data = models.JSONField(
         default=dict, encoder=StructEncoder, decoder=StructDecoder)
 
@@ -138,4 +140,11 @@ class Article(LinkiModel, HasPrivacy):
 
 
 class Linki(HasPrivacy, HasUser, models.Model):
-    pass
+    name = models.CharField(max_length=250)
+    editable_fields = ['name']
+
+    def get_absolute_url(self):
+        return reverse("linkis:linki_detail", kwargs={
+            "username": self.user.username,
+            "linki_name": self.name
+        })
