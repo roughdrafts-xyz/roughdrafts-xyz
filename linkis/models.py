@@ -59,49 +59,10 @@ class Profile(models.Model):
         return self.user.username
 
 
-class StructEncoder(JSONEncoder):
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        self.msgspec_encoder = json.Encoder()
-
-    def encode(self, o: Struct) -> str:
-        return self.msgspec_encoder.encode(o).decode()
-
-
-class StructDecoder(JSONDecoder):
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        self.msgspec_decoder = json.Decoder()
-
-    def decode(self, s: str, _w: Callable[..., Any] = ...) -> Any:
-        return self.msgspec_decoder.decode(s)
-
-
 class HasUser(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-
-    class Meta:
-        abstract = True
-
-
-class LinkiModel(HasUser, models.Model):
-    label_id = models.CharField(
-        max_length=56, default='00000000000000000000000000000000000000000000000000000000',
-        primary_key=True)
-
-    data = models.JSONField(
-        default=dict, encoder=StructEncoder, decoder=StructDecoder)
-
-    editable_fields = ['data']
-    linki_type: Type[Struct]
-
-    def as_linki_type(self):
-        return convert(self.data, type=self.linki_type)
-
-    def __str__(self) -> str:
-        return self.label_id
 
     class Meta:
         abstract = True
@@ -137,13 +98,30 @@ class Linki(HasPrivacy, HasUser, models.Model):
     """
 
 
+class LinkiModel(HasUser, models.Model):
+    linki = models.ForeignKey(Linki, on_delete=models.CASCADE)
+    label_id = models.CharField(
+        max_length=56, default='00000000000000000000000000000000000000000000000000000000',
+        primary_key=True)
+
+    data = models.JSONField(default=dict)
+
+    editable_fields = ['data']
+    linki_type: Type[Struct]
+
+    def as_linki_type(self):
+        return convert(self.data, type=self.linki_type)
+
+    def __str__(self) -> str:
+        return self.label_id
+
+    class Meta:
+        abstract = True
+
+
 class Article(LinkiModel, HasPrivacy):
     rendered_content = models.TextField()
     linki_type = LinkiArticle
-    name = models.CharField(max_length=250)
-    linki = models.ForeignKey(Linki, on_delete=models.CASCADE)
-    content = models.TextField()
-    editable_fields = ['name', 'content']
 
     def save(self, *args, **kwargs):
         self.rendered_content = self.preview_render(self.data["content"])

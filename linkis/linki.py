@@ -6,7 +6,7 @@ from linki.editor import Editor
 from linki.repository import Repository, MemoryRepoConnection
 from . import models
 from django.db.models import Manager as DjangoManager
-from msgspec import Struct
+from msgspec import Struct, to_builtins
 from linki.id import ID
 
 
@@ -27,9 +27,10 @@ class DjangoEditor(Editor):
 
 
 class DjangoConnection(Connection[Struct]):
-    def __init__(self, manager: DjangoManager, user: User) -> None:
+    def __init__(self, manager: DjangoManager, user: User, linki: models.Linki) -> None:
         self.store = manager
         self.user = user
+        self.linki = linki
 
     def __setitem__(self, __key: ID, __value: Struct) -> None:
         if (self.user is None):
@@ -37,7 +38,8 @@ class DjangoConnection(Connection[Struct]):
         self.store.update_or_create({
             "label_id": __key,
             "user": self.user,
-            "data": __value
+            "linki": self.linki,
+            "data": to_builtins(__value)
         })
 
     def __delitem__(self, __key: ID) -> None:
@@ -67,10 +69,10 @@ class DjangoRepositoryConnection(MemoryRepoConnection):
         # 'config': models.Config
     }
 
-    def get_style(self, style: str, user: User) -> DjangoConnection:
+    def get_style(self, style: str, user: User, linki: models.Linki) -> DjangoConnection:
         model: DjangoManager = self.styles[style]  # type: ignore
         model = model.filter(user=user)
-        return DjangoConnection(model, user)
+        return DjangoConnection(model, user, linki)
 
     """
     TODO
