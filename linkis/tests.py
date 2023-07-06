@@ -56,7 +56,7 @@ class LinkiPathTest(TestCase):
     def test_make_new(self):
         # it should make it and redirect you to it.
         res = self.client.post('/new', {'name': 'test-linki'})
-        self.assertRedirects(res, f"/{self.user.username}/test-linki")
+        self.assertRedirects(res, f"/{self.user.username}/test-linki/")
 
 
 class ArticlePathTest(TestCase):

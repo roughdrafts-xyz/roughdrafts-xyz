@@ -120,6 +120,7 @@ AUTHENTICATION_BACKENDS = [
 
 INSTALLED_APPS = [
     'linkis.apps.LinkisConfig',
+    'django_json_widget',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
