@@ -120,13 +120,42 @@ class HasPrivacy(models.Model):
         abstract = True
 
 
+class Linki(HasPrivacy, HasUser, models.Model):
+    name = models.CharField(max_length=250)
+    editable_fields = ['name']
+
+    def get_absolute_url(self):
+        return reverse("linkis:linki_detail", kwargs={
+            "username": self.user.username,
+            "linki_name": self.name
+        })
+
+    """
+    TODO
+    def get_django_connection(self, style: str):
+        return DjangoRepositoryConnection.get_connection(style, self.user, self)
+    """
+
+
 class Article(LinkiModel, HasPrivacy):
     rendered_content = models.TextField()
     linki_type = LinkiArticle
+    name = models.CharField(max_length=250)
+    linki = models.ForeignKey(Linki, on_delete=models.CASCADE)
+    content = models.TextField()
+    editable_fields = ['name', 'content']
 
     def save(self, *args, **kwargs):
-        self.rendered_content = self.preview_render(self.data.content)
+        self.rendered_content = self.preview_render(self.data["content"])
         super().save(*args, **kwargs)  # Call the "real" save() method.
+
+    def get_absolute_url(self):
+        data = self.data
+        return reverse("linkis:article_detail", kwargs={
+            "username": self.user.username,
+            "linki_name": self.linki.name,
+            "article_name": data["label"][-1]
+        })
 
     @staticmethod
     def preview_render(content):
@@ -137,14 +166,3 @@ class Article(LinkiModel, HasPrivacy):
         from_f = 'markdown_github-pandoc_title_block'
         html = convert_text(content, 'html', format=from_f)
         return clean(html)
-
-
-class Linki(HasPrivacy, HasUser, models.Model):
-    name = models.CharField(max_length=250)
-    editable_fields = ['name']
-
-    def get_absolute_url(self):
-        return reverse("linkis:linki_detail", kwargs={
-            "username": self.user.username,
-            "linki_name": self.name
-        })

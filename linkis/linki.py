@@ -71,3 +71,16 @@ class DjangoRepositoryConnection(MemoryRepoConnection):
         model: DjangoManager = self.styles[style]  # type: ignore
         model = model.filter(user=user)
         return DjangoConnection(model, user)
+
+    """
+    TODO
+
+    def get_style(self, style: str, user: User, linki: models.Linki) -> DjangoConnection:
+        return self.get_connection(style, user, linki)
+
+    @staticmethod
+    def get_connection(style: str, user: User, linki: models.Linki) -> DjangoConnection:
+        model: DjangoManager = self.styles[style]  # type: ignore
+        model = model.filter(user=user, linki=linki)
+        return DjangoConnection(model, user)
+    """
