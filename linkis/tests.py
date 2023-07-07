@@ -3,8 +3,9 @@ from django.utils.safestring import SafeText  # nopep8
 setup()  # nopep8
 
 from django.http.response import Http404
-from .models import Article as DjangoArticle, Linki
-from linki.article import Article as LinkiArticle
+from .models import Article as DjangoArticle, Linki, Title as DjangoTitle
+from linki.article import Article as LinkiArticle, ArticleCollection
+from linki.title import Title as LinkiTitle, TitleCollection
 from linki.id import SimpleLabel
 from .linki import DjangoConnection
 from django.test import TestCase, Client
@@ -16,36 +17,66 @@ class DjangoConnectionTest(TestCase):
         self.user = User.objects.create_user(
             'test', 'test@example.com', 'password')
         self.linki = Linki.objects.create(name="test-linki", user=self.user)
-        self.connection = DjangoConnection(  # its a manager, Lance.
-            DjangoArticle.objects, self.user, self.linki)  # type: ignore
         self.label = SimpleLabel('key')
         self.label_id = self.label.labelId
-        self.linkiArticle = LinkiArticle(self.label, '', None)
 
-    def test_basic_functions(self):
+    def test_basic_function(self):
+        linkiArticle = LinkiArticle(self.label, '', None)
+        article_id = linkiArticle.articleId
+        connection = DjangoConnection(  # its a manager, Lance.
+            DjangoArticle.objects, self.user, self.linki)  # type: ignore
 
         def get_article():
-            return self.connection[self.label_id]
+            return connection[article_id]
 
         def del_article():
-            del self.connection[self.label_id]
+            del connection[article_id]
 
         def has_article():
-            return self.label_id in self.connection
+            return article_id in connection
 
         self.assertRaises(Http404, get_article)
 
         # set and get a key
-        self.connection[self.label_id] = self.linkiArticle
-        self.assertEqual(get_article(), self.linkiArticle)
+        connection[article_id] = linkiArticle
+        self.assertEqual(get_article(), linkiArticle)
         self.assertEqual(True, has_article())
-        self.assertEqual(len(self.connection), 1)
+        self.assertEqual(len(connection), 1)
 
         del_article()
         self.assertRaises(Http404, get_article)
         self.assertRaises(Http404, del_article)
         self.assertRaises(Http404, has_article)
-        self.assertEqual(len(self.connection), 0)
+        self.assertEqual(len(connection), 0)
+
+    def test_article(self):
+        linkiArticle = LinkiArticle(self.label, '', None)
+        article_id = linkiArticle.articleId
+        connection = DjangoConnection(  # its a manager, Lance.
+            DjangoArticle.objects, self.user, self.linki)  # type: ignore
+        collection = ArticleCollection(connection)  # type: ignore
+        collection.merge_article(linkiArticle)
+
+        res = connection[article_id]
+        self.assertEqual(res, linkiArticle)
+
+    def test_title(self):
+        linkiArticle = LinkiTitle(self.label, 'old text', None)
+        title_id = linkiArticle.label.labelId
+        article_id = linkiArticle.articleId
+
+        connection = DjangoConnection(  # its a manager, Lance.
+            DjangoTitle.objects, self.user, self.linki)  # type: ignore
+        collection = TitleCollection(connection)  # type: ignore
+        collection.set_title(linkiArticle)
+
+        res = connection[title_id]
+        self.assertEqual(res, linkiArticle)
+
+        def get_article():
+            return connection[article_id]
+
+        self.assertRaises(Http404, get_article)
 
 
 class LinkiPathTest(TestCase):

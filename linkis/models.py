@@ -3,6 +3,7 @@ from json import JSONDecoder, JSONEncoder
 from typing import Any, Iterable, Optional, Type
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.query import QuerySet
 from django.utils.text import slugify
 from django.urls import reverse
 from linki.article import BaseArticle as LinkiArticle
@@ -102,7 +103,9 @@ class LinkiModel(HasUser, models.Model):
     linki = models.ForeignKey(Linki, on_delete=models.CASCADE)
     label_id = models.CharField(
         max_length=56, default='00000000000000000000000000000000000000000000000000000000',
-        primary_key=True)
+        primary_key=True,
+        editable=False
+    )
 
     data = models.JSONField(default=dict)
 
@@ -142,3 +145,7 @@ class Article(LinkiModel, HasPrivacy):
         html = convert_text(content, 'html', format=from_f,
                             extra_args=['--quiet'])
         return clean(html)
+
+
+class Title(Article):
+    pass
