@@ -5,10 +5,12 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.shortcuts import get_object_or_404
 from django.views.generic import DetailView, CreateView
+from django.views import View
 from django.views.generic.edit import FormView
 from linki.article import Article as LinkiArticle, ArticleCollection
 from linki.id import SimpleLabel
 from linkis.linki import DjangoConnection
+from django.http.response import HttpResponse
 
 from linkis.models import Article, Linki
 
@@ -43,6 +45,16 @@ class LinkiCreateView(LoginRequiredMixin, CreateView):
 
 class ArticleDetailView(DetailView):
     model = Article
+
+
+class TitleDetailView(DetailView):
+    model = Article
+
+    def get_object(self, queryset=None):
+        article = Article.objects.get(
+            label_id='d0c395f98cd103e0473897d55fa38a9eb5b798bad391d09269f73c3f')
+        article.label_id = '07fe069682de9fbea1e204a97aa08fcc92fbfa0b72d6c2b342c049b7'
+        return article
 
     """
     def get_object(self, queryset=None):

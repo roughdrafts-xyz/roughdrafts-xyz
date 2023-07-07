@@ -7,7 +7,7 @@ from django.utils.text import slugify
 from django.urls import reverse
 from linki.article import BaseArticle as LinkiArticle
 
-from msgspec import Struct, to_builtins, json
+from msgspec import Struct
 from pypandoc import convert_text
 from nh3 import clean
 from msgspec import convert

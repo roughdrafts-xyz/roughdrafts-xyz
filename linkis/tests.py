@@ -1,4 +1,5 @@
-from django import setup  # nopep8
+from django import setup
+from django.utils.safestring import SafeText  # nopep8
 setup()  # nopep8
 
 from django.http.response import Http404
@@ -82,3 +83,32 @@ class ArticlePathTest(TestCase):
                 'content': self.linkiArticle.content}
         )
         self.assertRedirects(res, f"/{self.linkiArticle.articleId}")
+
+
+class TitlePathTest(TestCase):
+    def setUp(self) -> None:
+        self.user = User.objects.create_user(
+            'test', 'test@example.com', 'password')
+        self.client: Client = Client(SERVER_NAME='localhost')
+        self.client.force_login(self.user)
+        self.client.post('/new', {'name': 'test-linki'})
+        self.l_url = f"/{self.user.username}/test-linki"
+
+        self.label = SimpleLabel('test-article')
+        self.label_id = self.label.labelId
+        self.linkiArticle = LinkiArticle(self.label, 'Test Content.', None)
+        self.client.post(
+            f"{self.l_url}/new",
+            {'name': self.linkiArticle.label.name,
+                'content': self.linkiArticle.content}
+        )
+
+    def test_make_new(self):
+        res = self.client.get(
+            f'/{self.user.username}/0/{self.linkiArticle.label.name}')
+        b_content: bytes = res.content
+        content = SafeText(b_content.decode())
+
+        self.assertIn(self.linkiArticle.label.name, content)
+        self.assertIn(self.linkiArticle.content, content)
+        self.assertIn(self.linkiArticle.label.labelId, content)
