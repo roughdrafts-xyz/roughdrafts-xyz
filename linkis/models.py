@@ -128,11 +128,8 @@ class Article(LinkiModel, HasPrivacy):
         super().save(*args, **kwargs)  # Call the "real" save() method.
 
     def get_absolute_url(self):
-        data = self.data
         return reverse("linkis:article_detail", kwargs={
-            "username": self.user.username,
-            "linki_name": self.linki.name,
-            "article_name": data["label"][-1]
+            "pk": self.label_id
         })
 
     @staticmethod
@@ -142,5 +139,6 @@ class Article(LinkiModel, HasPrivacy):
         # pypandoc is currently being used because its what linki uses
         # and at the time of writing I want compatibility between this and that.
         from_f = 'markdown_github-pandoc_title_block'
-        html = convert_text(content, 'html', format=from_f)
+        html = convert_text(content, 'html', format=from_f,
+                            extra_args=['--quiet'])
         return clean(html)

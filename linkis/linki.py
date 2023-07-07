@@ -71,7 +71,7 @@ class DjangoRepositoryConnection(MemoryRepoConnection):
 
     def get_style(self, style: str, user: User, linki: models.Linki) -> DjangoConnection:
         model: DjangoManager = self.styles[style]  # type: ignore
-        model = model.filter(user=user)
+        model = model.filter(user=user, linki=linki)
         return DjangoConnection(model, user, linki)
 
     """

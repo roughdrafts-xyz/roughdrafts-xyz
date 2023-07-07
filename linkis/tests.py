@@ -69,11 +69,16 @@ class ArticlePathTest(TestCase):
         self.client.post('/new', {'name': 'test-linki'})
         self.l_url = f"/{self.user.username}/test-linki"
 
+        self.label = SimpleLabel('test-article')
+        self.label_id = self.label.labelId
+        self.linkiArticle = LinkiArticle(self.label, 'Test Content.', None)
+
     def test_make_new(self):
         # it should make it and redirect you to it.
         l_url = self.l_url
         res = self.client.post(
             f"{l_url}/new",
-            {'name': 'test-article', 'content': 'Test Content.'}
+            {'name': self.linkiArticle.label.name,
+                'content': self.linkiArticle.content}
         )
-        self.assertRedirects(res, f"{l_url}/test-article")
+        self.assertRedirects(res, f"/{self.linkiArticle.articleId}")
