@@ -22,8 +22,8 @@ class DjangoConnectionTest(TestCase):
     def test_basic_function(self):
         linkiArticle = LinkiArticle(self.label, '', None)
         article_id = linkiArticle.articleId
-        connection = DjangoConnection(  # its a manager, Lance.
-            DjangoArticle.objects, self.user, self.linki)  # type: ignore
+        connection = DjangoConnection(
+            DjangoArticle.structs, self.user, self.linki)
 
         def get_article():
             return connection[article_id]
@@ -34,18 +34,21 @@ class DjangoConnectionTest(TestCase):
         def has_article():
             return article_id in connection
 
-        self.assertRaises(Http404, get_article)
+        self.assertRaises(KeyError, get_article)
+        self.assertRaises(KeyError, del_article)
+        self.assertFalse(has_article())
+        self.assertEqual(len(connection), 0)
 
         # set and get a key
         connection[article_id] = linkiArticle
         self.assertEqual(get_article(), linkiArticle)
-        self.assertEqual(True, has_article())
+        self.assertTrue(has_article())
         self.assertEqual(len(connection), 1)
 
         del_article()
-        self.assertRaises(Http404, get_article)
-        self.assertRaises(Http404, del_article)
-        self.assertRaises(Http404, has_article)
+        self.assertRaises(KeyError, get_article)
+        self.assertRaises(KeyError, del_article)
+        self.assertFalse(has_article())
         self.assertEqual(len(connection), 0)
 
     def test_article(self):

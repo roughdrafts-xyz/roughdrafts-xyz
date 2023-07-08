@@ -1,14 +1,15 @@
 from collections.abc import Callable
 from json import JSONDecoder, JSONEncoder
-from typing import Any, Iterable, Optional, Type
+from typing import Any, Iterable, MutableMapping, Optional, Self, Tuple, Type
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.query import QuerySet
 from django.utils.text import slugify
 from django.urls import reverse
 from linki.article import BaseArticle as LinkiArticle
+from linki.id import ID
 
-from msgspec import Struct
+from msgspec import Struct, to_builtins
 from pypandoc import convert_text
 from nh3 import clean
 from msgspec import convert
@@ -99,9 +100,39 @@ class Linki(HasPrivacy, HasUser, models.Model):
     """
 
 
+class StructManager(models.Manager):
+    model: 'LinkiModel'
+
+    def get_as_struct(self, *args: Any, **kwargs: Any) -> Struct:
+        item: LinkiModel = super().get(*args, **kwargs)
+        return item.as_linki_type()
+
+    def upsert_from_struct(self, linki: Linki, user: User, id: ID, struct: Struct) -> Struct:
+        try:
+            return self.update_from_struct(
+                linki=linki, user=user, id=id, struct=struct)
+        except self.model.DoesNotExist:
+            return self.create_from_struct(
+                linki=linki, user=user, struct=struct)
+
+    def update_from_struct(self, linki: Linki, user: User, id: ID, struct: Struct) -> Struct:
+        item: 'LinkiModel' = super().get(linki=linki, user=user, id=id)
+        item.linki = linki
+        item.user = user
+        item.data = to_builtins(struct)
+        item.save()
+        return item.as_linki_type()
+
+    def create_from_struct(self, linki: Linki, user: User, struct: Struct) -> Struct:
+        item = self.model.from_linki_type(linki, user, struct)
+        item.save()
+        return item.as_linki_type()
+
+
 class LinkiModel(HasUser, models.Model):
     linki = models.ForeignKey(Linki, on_delete=models.CASCADE)
-    label_id = models.CharField(
+    structs = StructManager()
+    id = models.CharField(
         max_length=56, default='00000000000000000000000000000000000000000000000000000000',
         primary_key=True,
         editable=False
@@ -115,8 +146,12 @@ class LinkiModel(HasUser, models.Model):
     def as_linki_type(self):
         return convert(self.data, type=self.linki_type)
 
+    @classmethod
+    def from_linki_type(self, linki: Linki, user: User, struct: Struct) -> Self:
+        raise NotImplementedError
+
     def __str__(self) -> str:
-        return self.label_id
+        return str(self.as_linki_type())
 
     class Meta:
         abstract = True
@@ -132,7 +167,7 @@ class ArticleBase(LinkiModel, HasPrivacy):
 
     def get_absolute_url(self):
         return reverse("linkis:article_detail", kwargs={
-            "pk": self.label_id
+            "pk": self.id
         })
 
     @staticmethod

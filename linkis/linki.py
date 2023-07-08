@@ -5,7 +5,6 @@ from linki.connection import Connection
 from linki.editor import Editor
 from linki.repository import Repository, MemoryRepoConnection
 from . import models
-from django.db.models import Manager as DjangoManager
 from msgspec import Struct, to_builtins
 from linki.id import ID
 
@@ -27,28 +26,29 @@ class DjangoEditor(Editor):
 
 
 class DjangoConnection(Connection[Struct]):
-    def __init__(self, manager: DjangoManager, user: User, linki: models.Linki) -> None:
+    def __init__(self, manager: models.StructManager, user: User, linki: models.Linki) -> None:
         self.store = manager
         self.user = user
         self.linki = linki
 
     def __setitem__(self, __key: ID, __value: Struct) -> None:
-        if (self.user is None):
-            return None
-        self.store.update_or_create({
-            "label_id": __key,
-            "user": self.user,
-            "linki": self.linki,
-            "data": to_builtins(__value)
-        })
+        self.store.upsert_from_struct(self.linki, self.user, __key, __value)
 
     def __delitem__(self, __key: ID) -> None:
-        val: models.LinkiModel = get_object_or_404(self.store, label_id=__key)
-        val.delete()
+        try:
+            val: models.LinkiModel = self.store.get(
+                linki=self.linki, user=self.user, id=__key)
+
+            val.delete()
+        except self.store.model.DoesNotExist:
+            raise KeyError
 
     def __getitem__(self, __key: ID) -> Struct:
-        val: models.LinkiModel = get_object_or_404(self.store, label_id=__key)
-        return val.as_linki_type()
+        try:
+            return self.store.get_as_struct(
+                linki=self.linki, user=self.user, id=__key)
+        except self.store.model.DoesNotExist:
+            raise KeyError
 
     def __iter__(self) -> Iterator[ID]:
         for x in self.store.values_list('pk', flat=True).iterator():
@@ -63,14 +63,14 @@ class DjangoRepositoryConnection(MemoryRepoConnection):
         # 'subs': models.Sub,
         # 'contribs': models.Contrib,
         # 'drafts': models.Draft,
-        'articles': models.Article.objects,
+        'articles': models.Article.structs,
         # 'users': models.ContribUser,
         # 'changes': models.Change,
         # 'config': models.Config
     }
 
     def get_style(self, style: str, user: User, linki: models.Linki) -> DjangoConnection:
-        model: DjangoManager = self.styles[style]  # type: ignore
+        model: models.StructManager = self.styles[style]
         model = model.filter(user=user, linki=linki)
         return DjangoConnection(model, user, linki)
 
