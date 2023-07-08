@@ -122,7 +122,7 @@ class LinkiModel(HasUser, models.Model):
         abstract = True
 
 
-class Article(LinkiModel, HasPrivacy):
+class ArticleBase(LinkiModel, HasPrivacy):
     rendered_content = models.TextField()
     linki_type = LinkiArticle
 
@@ -146,6 +146,13 @@ class Article(LinkiModel, HasPrivacy):
                             extra_args=['--quiet'])
         return clean(html)
 
+    class Meta:
+        abstract = True
 
-class Title(Article):
+
+class Article(ArticleBase):
+    pass
+
+
+class Title(ArticleBase):
     pass

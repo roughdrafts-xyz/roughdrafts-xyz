@@ -167,7 +167,7 @@ class TitlePathTest(TestCase):
             self.label, 'New Test Content.', self.linkiArticle)
 
         res = self.client.post(
-            f'/{self.user.username}/0/{self.linkiArticle.label.name}',
+            f'/{self.user.username}/test-linki/{self.linkiArticle.label.name}',
             {'name': linkiArticle.label.name,
                 'content': linkiArticle.content}
         )
@@ -178,4 +178,4 @@ class TitlePathTest(TestCase):
 
         self.assertIn(self.linkiArticle.label.name, content)
         self.assertIn(self.linkiArticle.content, content)
-        self.assertIn(self.linkiArticle.label.labelId, content)
+        self.assertIn(self.linkiArticle.articleId, content)
