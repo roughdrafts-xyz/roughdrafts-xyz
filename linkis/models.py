@@ -141,10 +141,9 @@ class LinkiModel(HasUser, models.Model):
     data = models.JSONField(default=dict)
 
     editable_fields = ['data']
-    linki_type: Type[Struct]
 
-    def as_linki_type(self):
-        return convert(self.data, type=self.linki_type)
+    def as_linki_type(self) -> Struct:
+        raise NotImplementedError
 
     @classmethod
     def from_linki_type(self, linki: Linki, user: User, struct: Struct) -> Self:
@@ -159,7 +158,6 @@ class LinkiModel(HasUser, models.Model):
 
 class ArticleBase(LinkiModel, HasPrivacy):
     rendered_content = models.TextField()
-    linki_type = LinkiArticle
 
     def save(self, *args, **kwargs):
         self.rendered_content = self.preview_render(self.data["content"])
@@ -169,6 +167,18 @@ class ArticleBase(LinkiModel, HasPrivacy):
         return reverse("linkis:article_detail", kwargs={
             "pk": self.id
         })
+
+    def as_linki_type(self) -> LinkiArticle:
+        return convert(self.data, type=LinkiArticle)
+
+    @classmethod
+    def from_linki_type(self, linki: Linki, user: User, struct: LinkiArticle) -> Self:
+        return self(
+            id=struct.label.labelId,
+            user=user,
+            linki=linki,
+            data=to_builtins(struct)
+        )
 
     @staticmethod
     def preview_render(content):
