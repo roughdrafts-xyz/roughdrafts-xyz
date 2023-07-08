@@ -155,4 +155,8 @@ class Article(ArticleBase):
 
 
 class Title(ArticleBase):
-    pass
+    name = models.CharField(max_length=250)
+
+    def save(self, *args, **kwargs):
+        self.name = self.data['label']['path'][-1]
+        super().save(*args, **kwargs)  # Call the "real" save() method.

@@ -1,4 +1,6 @@
+<a href="{% url "linkis:title_update" object.user object.linki.name object.name %}">edit</a>
 <div>{{ object.data }}</div>
+<div>{{ object.as_linki_type }}</div>
 <div>{{ object.content }}</div>
 <div>{{ object.as_linki_type.label.labelId }}</div>
 <div>{{ object.as_linki_type.articleId }}</div>

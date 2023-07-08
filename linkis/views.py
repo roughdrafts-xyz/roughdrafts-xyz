@@ -1,8 +1,9 @@
-from typing import Any, Optional
+from typing import Any, Dict, Optional, Type
 from django import forms
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.db import models
+from django.forms.forms import BaseForm
 from django.shortcuts import get_object_or_404
 from django.views.generic import DetailView, CreateView, UpdateView
 from django.views import View
@@ -24,6 +25,8 @@ class LinkiDetailView(DetailView):
         user = get_object_or_404(User, username=self.kwargs["username"])
         linki = get_object_or_404(
             Linki, user=user, name=self.kwargs["linki_name"])
+        titles = Title.objects.filter(linki=linki).all()
+        linki.titles = titles  # type: ignore
         return linki
 
     """
@@ -53,12 +56,15 @@ class TitleDetailView(DetailView):
     model = Title
 
     def get_object(self, queryset=None):
-        label = SimpleLabel(self.kwargs["pk"])
-        return Title.objects.get(label_id=label.labelId)
+        user = self.request.user
+        linki = self.kwargs["linki_name"]
+        linki = get_object_or_404(Linki, user=user, name=linki)
+        name = self.kwargs["pk"]
+        return Title.objects.get(user=user, linki=linki, name=name)
 
 
 class TitleCreateView(LoginRequiredMixin, FormView):
-    template_name = "article_form.html"
+    template_name = "linkis/article_form.html"
     form_class = ArticleForm
 
     def form_valid(self, form):
@@ -91,8 +97,17 @@ class TitleCreateView(LoginRequiredMixin, FormView):
 
 
 class TitleUpdateView(LoginRequiredMixin, FormView):
-    template_name = "article_form.html"
+    template_name = "linkis/article_form.html"
     form_class = ArticleForm
+
+    def get_initial(self) -> Dict[str, Any]:
+        user = self.request.user
+        linki = self.kwargs["linki_name"]
+        pk = self.kwargs["pk"]
+        linki = get_object_or_404(Linki, user=user, name=linki)
+        title = get_object_or_404(
+            Title, linki=linki, user=user, name=pk)
+        return {'name': title.name, 'content': title.data["content"]}
 
     def form_valid(self, form):
         user = self.request.user
@@ -120,8 +135,8 @@ class TitleUpdateView(LoginRequiredMixin, FormView):
             edit_of = article_collection.get_article(title.articleId)
 
         article = LinkiArticle(label=label, content=content, editOf=edit_of)
-        article_collection.merge_article(article)
         title_collection.set_title(article)
+        article_collection.merge_article(article)
 
         article = Article.objects.get(label_id=article.articleId)
         self.success_url = article.get_absolute_url()

@@ -1,4 +1,11 @@
 {% extends "linkis/base.html" %}
 {% block content %}
     {{ linki.name }}
+    <ul>
+        {% for title in linki.titles %}
+            <li>
+                <a href="{{ title.as_linki_type.label.name }}">{{ title.as_linki_type.label.name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
 {% endblock content %}
