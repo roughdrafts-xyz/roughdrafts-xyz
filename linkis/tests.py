@@ -135,8 +135,44 @@ class TitlePathTest(TestCase):
         )
 
     def test_make_new(self):
+        res = self.client.get(f"{self.l_url}/{self.linkiArticle.label.name}")
+        b_content: bytes = res.content
+        content = SafeText(b_content.decode())
+
+        self.assertIn(self.linkiArticle.label.name, content)
+        self.assertIn(self.linkiArticle.content, content)
+        self.assertIn(self.linkiArticle.label.labelId, content)
+
+    def test_update_title(self):
+        linkiArticle = LinkiArticle(
+            self.label, 'New Test Content.', self.linkiArticle)
+
+        res = self.client.post(
+            f'/{self.user.username}/test-linki/{self.linkiArticle.label.name}/edit',
+            {'name': linkiArticle.label.name,
+                'content': linkiArticle.content}
+        )
+
         res = self.client.get(
-            f'/{self.user.username}/0/{self.linkiArticle.label.name}')
+            f'/{self.user.username}/test-linki/{linkiArticle.label.name}')
+        b_content: bytes = res.content
+        content = SafeText(b_content.decode())
+
+        self.assertIn(linkiArticle.label.name, content)
+        self.assertIn(linkiArticle.content, content)
+        self.assertIn(linkiArticle.label.labelId, content)
+
+    def test_update_makes_article(self):
+        linkiArticle = LinkiArticle(
+            self.label, 'New Test Content.', self.linkiArticle)
+
+        res = self.client.post(
+            f'/{self.user.username}/0/{self.linkiArticle.label.name}',
+            {'name': linkiArticle.label.name,
+                'content': linkiArticle.content}
+        )
+
+        res = self.client.get(f"/{self.linkiArticle.articleId}")
         b_content: bytes = res.content
         content = SafeText(b_content.decode())
 
