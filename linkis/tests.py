@@ -1,7 +1,6 @@
-from django import setup
-from django.utils.safestring import SafeText  # nopep8
+from django import setup  # nopep8
 setup()  # nopep8
-
+from django.utils.safestring import SafeText
 from django.http.response import Http404
 from .models import Article as DjangoArticle, Linki, Title as DjangoTitle
 from linki.article import Article as LinkiArticle, ArticleCollection
@@ -159,8 +158,9 @@ class TitlePathTest(TestCase):
         content = SafeText(b_content.decode())
 
         self.assertIn(linkiArticle.label.name, content)
-        self.assertIn(linkiArticle.content, content)
         self.assertIn(linkiArticle.label.labelId, content)
+        self.assertIn(linkiArticle.content, content)
+        self.assertIn(linkiArticle.articleId, content)
 
     def test_update_makes_article(self):
         linkiArticle = LinkiArticle(
@@ -177,5 +177,6 @@ class TitlePathTest(TestCase):
         content = SafeText(b_content.decode())
 
         self.assertIn(self.linkiArticle.label.name, content)
+        self.assertIn(self.linkiArticle.label.labelId, content)
         self.assertIn(self.linkiArticle.content, content)
         self.assertIn(self.linkiArticle.articleId, content)
