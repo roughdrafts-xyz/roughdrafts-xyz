@@ -1,6 +1,4 @@
 from abc import ABC
-from contextlib import AbstractContextManager
-from typing import Any
 from django import setup  # nopep8
 setup()  # nopep8
 from django.utils.safestring import SafeText
@@ -213,4 +211,10 @@ class TitleHistoryTest(UsesLinki):
         post_update(self.linkiArticles[2])
 
     def test_title_has_history(self):
-        pass
+        article = self.linkiArticles[0]
+        res = self.client.get(
+            f'/{self.user.username}/test-linki/{article.label.name}')
+        b_content: bytes = res.content
+        content = SafeText(b_content.decode())
+        for s_article in self.linkiArticles:
+            self.assertIn(s_article.articleId, content)
