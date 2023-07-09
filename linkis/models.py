@@ -81,7 +81,7 @@ class HasPrivacy(models.Model):
 
 
 class Linki(HasPrivacy, HasUser, models.Model):
-    name = models.CharField(max_length=250)
+    name = models.SlugField()
     editable_fields = ['name']
 
     def get_absolute_url(self):
@@ -194,7 +194,7 @@ class Article(ArticleBase):
 
 
 class Title(ArticleBase):
-    name = models.CharField(max_length=250)
+    name = models.SlugField()
 
     @classmethod
     def from_linki_type(cls, linki: Linki, user: User, struct: LinkiArticle) -> Self:
@@ -204,5 +204,5 @@ class Title(ArticleBase):
 
     def save(self, *args, **kwargs):
         struct = self.as_linki_type()
-        self.name = struct.label.name
+        self.name = slugify(struct.label.name)
         super().save(*args, **kwargs)  # Call the "real" save() method.
