@@ -146,7 +146,7 @@ class LinkiModel(HasUser, models.Model):
         raise NotImplementedError
 
     @classmethod
-    def from_linki_type(self, linki: Linki, user: User, struct: Struct) -> Self:
+    def from_linki_type(cls, linki: Linki, user: User, struct: Struct) -> Self:
         raise NotImplementedError
 
     def __str__(self) -> str:
