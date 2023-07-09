@@ -160,7 +160,8 @@ class ArticleBase(LinkiModel, HasPrivacy):
     rendered_content = models.TextField()
 
     def save(self, *args, **kwargs):
-        self.rendered_content = self.preview_render(self.data["content"])
+        struct = self.as_linki_type()
+        self.rendered_content = self.preview_render(struct.content)
         super().save(*args, **kwargs)  # Call the "real" save() method.
 
     def get_absolute_url(self):
@@ -182,10 +183,6 @@ class ArticleBase(LinkiModel, HasPrivacy):
 
     @staticmethod
     def preview_render(content):
-        # this is dumb but its to prevent trying to render yaml
-        # TODO could be fixed by using a different markdown renderer
-        # pypandoc is currently being used because its what linki uses
-        # and at the time of writing I want compatibility between this and that.
         from_f = 'markdown_github-pandoc_title_block'
         html = convert_text(content, 'html', format=from_f,
                             extra_args=['--quiet'])
