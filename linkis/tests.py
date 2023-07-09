@@ -1,3 +1,6 @@
+from abc import ABC
+from contextlib import AbstractContextManager
+from typing import Any
 from django import setup  # nopep8
 setup()  # nopep8
 from django.utils.safestring import SafeText
@@ -8,6 +11,21 @@ from linki.id import SimpleLabel
 from .linki import DjangoConnection
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
+
+
+class UsesLinki(TestCase, ABC):
+    def setUp(self) -> None:
+        self.client: Client = Client(SERVER_NAME='localhost')
+
+        self.user = User.objects.create_user(
+            'test', 'test@example.com', 'password')
+        self.client.force_login(self.user)
+
+        self.linki = Linki.objects.create(name="test-linki", user=self.user)
+        self.l_url = f"/{self.user.username}/test-linki"
+
+        self.label = SimpleLabel('test-article')
+        self.label_id = self.label.labelId
 
 
 class DjangoConnectionTest(TestCase):
@@ -93,17 +111,9 @@ class LinkiPathTest(TestCase):
         self.assertRedirects(res, f"/{self.user.username}/test-linki/")
 
 
-class ArticlePathTest(TestCase):
+class ArticlePathTest(UsesLinki, TestCase):
     def setUp(self) -> None:
-        self.user = User.objects.create_user(
-            'test', 'test@example.com', 'password')
-        self.client: Client = Client(SERVER_NAME='localhost')
-        self.client.force_login(self.user)
-        self.client.post('/new', {'name': 'test-linki'})
-        self.l_url = f"/{self.user.username}/test-linki"
-
-        self.label = SimpleLabel('test-article')
-        self.label_id = self.label.labelId
+        super().setUp()
         self.linkiArticle = LinkiArticle(self.label, 'Test Content.', None)
 
     def test_make_new(self):
@@ -117,17 +127,9 @@ class ArticlePathTest(TestCase):
         self.assertRedirects(res, f"/{self.linkiArticle.articleId}")
 
 
-class TitlePathTest(TestCase):
+class TitlePathTest(UsesLinki, TestCase):
     def setUp(self) -> None:
-        self.user = User.objects.create_user(
-            'test', 'test@example.com', 'password')
-        self.client: Client = Client(SERVER_NAME='localhost')
-        self.client.force_login(self.user)
-        self.client.post('/new', {'name': 'test-linki'})
-        self.l_url = f"/{self.user.username}/test-linki"
-
-        self.label = SimpleLabel('test-article')
-        self.label_id = self.label.labelId
+        super().setUp()
         self.linkiArticle = LinkiArticle(self.label, 'Test Content.', None)
         self.client.post(
             f"{self.l_url}/new",
@@ -182,3 +184,33 @@ class TitlePathTest(TestCase):
         self.assertIn(self.linkiArticle.label.labelId, content)
         self.assertIn(self.linkiArticle.content, content)
         self.assertIn(self.linkiArticle.articleId, content)
+
+
+class TitleHistoryTest(UsesLinki):
+    def setUp(self) -> None:
+        super().setUp()
+        linkiUpdates = ['initial content', 'second content', 'third content']
+        self.linkiArticles = []
+        prev = None
+        for update in linkiUpdates:
+            prev = LinkiArticle(self.label, update, prev)
+            self.linkiArticles.append(prev)
+
+        self.client.post(
+            f"{self.l_url}/new",
+            {'name': self.linkiArticles[0].label.name,
+                'content': self.linkiArticles[0].content}
+        )
+
+        def post_update(article):
+            self.client.post(
+                f'/{self.user.username}/test-linki/{article.label.name}',
+                {'name': article.label.name,
+                    'content': article.content}
+            )
+
+        post_update(self.linkiArticles[1])
+        post_update(self.linkiArticles[2])
+
+    def test_title_has_history(self):
+        pass

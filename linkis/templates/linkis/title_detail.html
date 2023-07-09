@@ -1,4 +1,7 @@
-<a href="{% url "linkis:title_update" object.user object.linki.name object.name %}">edit</a>
+{% block nav %}
+    <a href="{% url "linkis:title_update" object.user object.linki.name object.name %}">edit</a>
+    <a href="{% url "linkis:title_history" object.user object.linki.name object.name %}">history</a>
+{% endblock nav %}
 <div>{{ object.data }}</div>
 <div>{{ object.as_linki_type }}</div>
 <div>{{ object.content }}</div>
