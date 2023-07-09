@@ -54,8 +54,8 @@ class DjangoConnectionTest(TestCase):
     def test_article(self):
         linkiArticle = LinkiArticle(self.label, '', None)
         article_id = linkiArticle.articleId
-        connection = DjangoConnection(  # its a manager, Lance.
-            DjangoArticle.objects, self.user, self.linki)  # type: ignore
+        connection = DjangoConnection(
+            DjangoArticle.structs, self.user, self.linki)
         collection = ArticleCollection(connection)  # type: ignore
         collection.merge_article(linkiArticle)
 
@@ -67,8 +67,8 @@ class DjangoConnectionTest(TestCase):
         title_id = linkiArticle.label.labelId
         article_id = linkiArticle.articleId
 
-        connection = DjangoConnection(  # its a manager, Lance.
-            DjangoTitle.objects, self.user, self.linki)  # type: ignore
+        connection = DjangoConnection(
+            DjangoTitle.structs, self.user, self.linki)
         collection = TitleCollection(connection)  # type: ignore
         collection.set_title(linkiArticle)
 
@@ -78,7 +78,7 @@ class DjangoConnectionTest(TestCase):
         def get_article():
             return connection[article_id]
 
-        self.assertRaises(Http404, get_article)
+        self.assertRaises(KeyError, get_article)
 
 
 class LinkiPathTest(TestCase):

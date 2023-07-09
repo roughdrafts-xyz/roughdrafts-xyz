@@ -1,11 +1,11 @@
-from typing import Iterator
+from typing import Iterator, Type, TypeAlias, TypeVar
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from linki.connection import Connection
 from linki.editor import Editor
 from linki.repository import Repository, MemoryRepoConnection
 from . import models
-from msgspec import Struct, to_builtins
+from msgspec import Struct
 from linki.id import ID
 
 

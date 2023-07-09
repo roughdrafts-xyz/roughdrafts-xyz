@@ -172,9 +172,9 @@ class ArticleBase(LinkiModel, HasPrivacy):
         return convert(self.data, type=LinkiArticle)
 
     @classmethod
-    def from_linki_type(self, linki: Linki, user: User, struct: LinkiArticle) -> Self:
-        return self(
-            id=struct.label.labelId,
+    def from_linki_type(cls, linki: Linki, user: User, struct: LinkiArticle) -> Self:
+        return cls(
+            id=struct.articleId,
             user=user,
             linki=linki,
             data=to_builtins(struct)
@@ -202,6 +202,13 @@ class Article(ArticleBase):
 class Title(ArticleBase):
     name = models.CharField(max_length=250)
 
+    @classmethod
+    def from_linki_type(cls, linki: Linki, user: User, struct: LinkiArticle) -> Self:
+        item = super().from_linki_type(linki, user, struct)
+        item.id = struct.label.labelId
+        return item
+
     def save(self, *args, **kwargs):
-        self.name = self.data['label']['path'][-1]
+        struct = self.as_linki_type()
+        self.name = struct.label.name
         super().save(*args, **kwargs)  # Call the "real" save() method.

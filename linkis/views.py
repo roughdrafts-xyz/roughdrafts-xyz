@@ -25,7 +25,7 @@ class LinkiDetailView(DetailView):
         user = get_object_or_404(User, username=self.kwargs["username"])
         linki = get_object_or_404(
             Linki, user=user, name=self.kwargs["linki_name"])
-        titles = Title.objects.filter(linki=linki).all()
+        titles = Title.structs.filter(linki=linki).all()
         linki.titles = titles  # type: ignore
         return linki
 
@@ -60,7 +60,7 @@ class TitleDetailView(DetailView):
         linki = self.kwargs["linki_name"]
         linki = get_object_or_404(Linki, user=user, name=linki)
         name = self.kwargs["pk"]
-        return Title.objects.get(user=user, linki=linki, name=name)
+        return Title.structs.get(user=user, linki=linki, name=name)
 
 
 class TitleCreateView(LoginRequiredMixin, FormView):
@@ -72,13 +72,13 @@ class TitleCreateView(LoginRequiredMixin, FormView):
         linki = self.kwargs["linki_name"]
         linki = get_object_or_404(Linki, user=user, name=linki)
         article_collection = ArticleCollection(DjangoConnection(
-            Article.objects,  # type: ignore
+            Article.structs,
             self.request.user,  # type: ignore
             linki
         ))
 
         title_collection = TitleCollection(DjangoConnection(
-            Title.objects,  # type: ignore
+            Title.structs,
             self.request.user,  # type: ignore
             linki
         ))
@@ -91,7 +91,7 @@ class TitleCreateView(LoginRequiredMixin, FormView):
         article_collection.merge_article(article)
         title_collection.set_title(article)
 
-        article = Article.objects.get(label_id=article.articleId)
+        article = Article.structs.get(id=article.articleId)
         self.success_url = article.get_absolute_url()
         return super().form_valid(form)
 
@@ -114,13 +114,13 @@ class TitleUpdateView(LoginRequiredMixin, FormView):
         linki = self.kwargs["linki_name"]
         linki = get_object_or_404(Linki, user=user, name=linki)
         article_collection = ArticleCollection(DjangoConnection(
-            Article.objects,  # type: ignore
+            Article.structs,
             self.request.user,  # type: ignore
             linki
         ))
 
         title_collection = TitleCollection(DjangoConnection(
-            Title.objects,  # type: ignore
+            Title.structs,
             self.request.user,  # type: ignore
             linki
         ))
@@ -138,6 +138,6 @@ class TitleUpdateView(LoginRequiredMixin, FormView):
         title_collection.set_title(article)
         article_collection.merge_article(article)
 
-        article = Article.objects.get(label_id=article.articleId)
+        article = Article.structs.get(id=article.articleId)
         self.success_url = article.get_absolute_url()
         return super().form_valid(form)
