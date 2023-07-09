@@ -1,19 +1,14 @@
-from typing import Any, Dict, Optional, Type
-from django import forms
+from typing import Any, Dict
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
-from django.db import models
-from django.forms.forms import BaseForm
 from django.shortcuts import get_object_or_404
-from django.views.generic import DetailView, CreateView, UpdateView
-from django.views import View
+from django.views.generic import DetailView, CreateView
 from django.views.generic.edit import FormView
 from linki.article import Article as LinkiArticle, ArticleCollection
 from linki.title import TitleCollection
 from linki.id import SimpleLabel
 from linkis.forms import ArticleForm
 from linkis.linki import DjangoConnection
-from django.http.response import HttpResponse
 
 from linkis.models import Article, Linki, Title
 

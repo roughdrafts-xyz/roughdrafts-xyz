@@ -1,18 +1,15 @@
-from collections.abc import Callable
-from json import JSONDecoder, JSONEncoder
-from typing import Any, Iterable, MutableMapping, Optional, Self, Tuple, Type
-from django.db import models
+from typing import Any, Self
+
 from django.contrib.auth.models import User
-from django.db.models.query import QuerySet
-from django.utils.text import slugify
+from django.db import models
 from django.urls import reverse
+from django.utils.text import slugify
+from msgspec import Struct, convert, to_builtins
+from nh3 import clean
+from pypandoc import convert_text
+
 from linki.article import BaseArticle as LinkiArticle
 from linki.id import ID
-
-from msgspec import Struct, to_builtins
-from pypandoc import convert_text
-from nh3 import clean
-from msgspec import convert
 
 
 class Profile(models.Model):

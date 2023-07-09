@@ -1,7 +1,6 @@
 from django import setup  # nopep8
 setup()  # nopep8
 from django.utils.safestring import SafeText
-from django.http.response import Http404
 from .models import Article as DjangoArticle, Linki, Title as DjangoTitle
 from linki.article import Article as LinkiArticle, ArticleCollection
 from linki.title import Title as LinkiTitle, TitleCollection

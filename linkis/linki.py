@@ -1,6 +1,5 @@
-from typing import Iterator, Type, TypeAlias, TypeVar
+from typing import Iterator
 from django.contrib.auth.models import User
-from django.shortcuts import get_object_or_404
 from linki.connection import Connection
 from linki.editor import Editor
 from linki.repository import Repository, MemoryRepoConnection
@@ -22,7 +21,6 @@ class DjangoEditor(Editor):
 
     def __init__(self, repo: DjangoRepository) -> None:
         super().__init__(repo)
-    pass
 
 
 class DjangoConnection(Connection[Struct]):

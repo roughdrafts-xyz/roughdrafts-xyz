@@ -6,5 +6,4 @@ class LinkisConfig(AppConfig):
     name = 'linkis'
 
     def ready(self):
-        from . import receivers
         return super().ready()
