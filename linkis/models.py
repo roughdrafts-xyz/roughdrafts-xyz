@@ -202,6 +202,13 @@ class Title(ArticleBase):
         item.id = struct.label.labelId
         return item
 
+    def get_absolute_url(self):
+        return reverse("linkis:title_detail", kwargs={
+            "username": self.user.username,
+            "linki_name": self.linki.name,
+            "pk": self.name
+        })
+
     def save(self, *args, **kwargs):
         struct = self.as_linki_type()
         self.name = slugify(struct.label.name)

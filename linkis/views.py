@@ -81,7 +81,7 @@ class TitleCreateView(LoginRequiredMixin, FormView):
     form_class = ArticleForm
 
     def form_valid(self, form):
-        user = self.request.user
+        user: User = self.request.user  # type: ignore
         linki = self.kwargs["linki_name"]
         linki = get_object_or_404(Linki, user=user, name=linki)
         article_collection = ArticleCollection(DjangoConnection(
@@ -102,10 +102,9 @@ class TitleCreateView(LoginRequiredMixin, FormView):
 
         article = LinkiArticle(label=label, content=content, editOf=None)
         article_collection.merge_article(article)
-        title_collection.set_title(article)
-
-        article = Article.structs.get(id=article.articleId)
-        self.success_url = article.get_absolute_url()
+        title = title_collection.set_title(article)
+        title = Title.structs.get(id=title.label.labelId)
+        self.success_url = title.get_absolute_url()
         return super().form_valid(form)
 
 

@@ -115,14 +115,15 @@ class ArticlePathTest(UsesLinki, TestCase):
         self.linkiArticle = LinkiArticle(self.label, 'Test Content.', None)
 
     def test_make_new(self):
-        # it should make it and redirect you to it.
+        # it should make it and redirect you to its title page.
         l_url = self.l_url
         res = self.client.post(
             f"{l_url}/new",
             {'name': self.linkiArticle.label.name,
                 'content': self.linkiArticle.content}
         )
-        self.assertRedirects(res, f"/{self.linkiArticle.articleId}")
+        self.assertRedirects(
+            res, f"{l_url}/{self.label.name}")
 
 
 class TitlePathTest(UsesLinki, TestCase):
