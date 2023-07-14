@@ -2,7 +2,7 @@ from typing import Any, Dict
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
-from django.views.generic import DetailView, CreateView
+from django.views.generic import DetailView, CreateView, TemplateView
 from django.views.generic.edit import FormView
 from linki.article import Article as LinkiArticle, ArticleCollection
 from linki.title import TitleCollection
@@ -56,6 +56,10 @@ class TitleDetailView(DetailView):
         linki = get_object_or_404(Linki, user=user, name=linki)
         name = self.kwargs["pk"]
         return Title.structs.get(user=user, linki=linki, name=name)
+
+
+class TitleHistoryView(TemplateView):
+    template_name = "linkis/title_history.html"
 
 
 class TitleCreateView(LoginRequiredMixin, FormView):

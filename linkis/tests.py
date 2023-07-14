@@ -213,7 +213,7 @@ class TitleHistoryTest(UsesLinki):
     def test_title_has_history(self):
         article = self.linkiArticles[0]
         res = self.client.get(
-            f'/{self.user.username}/test-linki/{article.label.name}')
+            f'/{self.user.username}/test-linki/{article.label.name}/history')
         b_content: bytes = res.content
         content = SafeText(b_content.decode())
         for s_article in self.linkiArticles:

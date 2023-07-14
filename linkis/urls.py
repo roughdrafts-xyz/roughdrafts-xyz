@@ -12,7 +12,7 @@ urlpatterns = [
         path('new', views.TitleCreateView.as_view(), name="article_create"),
         path('<slug:pk>', include([
             path('/history',
-                 views.TitleUpdateView.as_view(), name="title_history"),
+                 views.TitleHistoryView.as_view(), name="title_history"),
             path('/edit', views.TitleUpdateView.as_view(), name="title_update"),
             path('', views.TitleDetailView.as_view(), name="title_detail")
         ]))
