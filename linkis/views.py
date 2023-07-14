@@ -1,10 +1,11 @@
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
+from django.db import models
 from django.shortcuts import get_object_or_404
 from django.views.generic import DetailView, CreateView, TemplateView
 from django.views.generic.edit import FormView
-from linki.article import Article as LinkiArticle, ArticleCollection
+from linki.article import BaseArticle as BLinkiArticle, Article as LinkiArticle, ArticleCollection
 from linki.title import TitleCollection
 from linki.id import SimpleLabel
 from linkis.forms import ArticleForm
@@ -60,6 +61,19 @@ class TitleDetailView(DetailView):
 
 class TitleHistoryView(TemplateView):
     template_name = "linkis/title_history.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        edits = []
+        title: BLinkiArticle = Title.structs.get_as_struct(
+            name=self.kwargs["pk"])  # type: ignore
+        edits.append(title)
+        nex = title.editOf
+        while (nex is not None):
+            edits.append(nex)
+            nex = nex.editOf
+        context["edits"] = edits
+        return context
 
 
 class TitleCreateView(LoginRequiredMixin, FormView):

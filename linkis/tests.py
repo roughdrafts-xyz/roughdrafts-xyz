@@ -202,7 +202,7 @@ class TitleHistoryTest(UsesLinki):
 
         def post_update(article):
             self.client.post(
-                f'/{self.user.username}/test-linki/{article.label.name}',
+                f'/{self.user.username}/test-linki/{article.label.name}/edit',
                 {'name': article.label.name,
                     'content': article.content}
             )

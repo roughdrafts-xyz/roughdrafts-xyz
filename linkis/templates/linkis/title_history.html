@@ -1,3 +1,7 @@
-ad2135b3ba30adc5739ed0cb19e6fc699da7140a70ce646cf3a936ca
-4455c52a6e39c115419a56abc1886d6af86f44a59a5a786915448a43
-f71158c5312282a4e33437698ef571fc0899d9eb2e5ef60aebe5bc8b
+<ul>
+    {% for edit in edits %}
+        <li>
+            <a href="{% url 'linkis:article_detail' edit.articleId %}">{{ edit.articleId|truncatechars:6 }} {{ edit.name }}</a>
+        </li>
+    {% endfor %}
+</ul>
